@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Canvas Drawing</title>
+        <style>
+            #drawingCanvas {
+                border: 1px solid #000;
+                cursor: crosshair;
+                image-rendering: pixelated;
+            }
+        </style>
+    </head>
+    <body>
+        <div>
+            <button id="pencilBtn">
+                <img
+                    src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACgAAAAiCAAAAAAIDsTXAAACL0lEQVR4AY3UQ7jlShSG4bq2bc6vp9e2rVnbtm0bG23b1rFt20yq1qq/k32M6ud8m0neGOJe0aPuEWJZ0IWLThfcAv8uBQacT8vIS2evrnTsNfSgIAeeg03EzM0f95sIYIZssKRSxGTjvAPPQ6FzFZnZGRmZ5eQuAQDjYgDKTkzD/+lPX3713jplSyJAkwECk8UHX37yQW9fDpPUYBd2XrXWGrJ0jDiRm5I1WYTAbmgHqZ1jUsj5v//uMijMFkGw6rn7JbJtI0l8v7cMZfsH/hwDZRlWrRpl3elXxYtniy48MSCtmkiheyjrlPfbhZvn/PjjF2IoSJE2QLIxXsQg/e8n7nxntVRE3D3U2i4ZKZJRlzNUHKm2SGsDJGT9339HBSRmilgQ3AwwQUyG0mX7+v+eCjZDbjgrZqAeyQ8Pzm5kbYQam76fHapqkSJGQzKMEBgl4mHZ0Su+XNtYr81LlKVDRQpszBYnK+ssA9SakfFfvy3FloUpIgZWo4YBEqLETLAuOzjwp3gtLQPkABxdnF10+cERzWe5W0hMiBSv//b7bz/NCAErYpiW6EKnh3/NQgNp1gaoA/CBZ8XI3AZpKdY3glG33nH/mHBYDFcZILRC5F0v/5kE2wJghsyEcDEsrYZIGSA1Q6Xz1waDFXO30H2kKHZTpCxpEzORcr+aHzGkZOCREoQO6ebvjgU7cMJOn9/nd/N5nDb7PF6Pd7PHfXm8Pp87ybdzohD3iR51/3W3Ly7tksdxXgAAAABJRU5ErkJggg=="
+                    alt="Pencil"
+                    border="0"
+                />
+            </button>
+            <button id="lineBtn"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACgAAAAiCAMAAAAau2s5AAABF1BMVEX+/v7////9/f37+/v6+vr8/PwAAAD5+fm5ubn29vb4+Pj39/e4uLj09PS1tbW+vr5LS0vCwsK6urq0tLTz8/Ovr6/w8PC9vb3x8fHAwMCwsLDBwcHj4+PJycm2traqqqqpqanv7+/y8vKGhoZOTk5KSkqsrKykpKQODg5gYGCPj4+lpaUwMDDu7u7Hx8eAgIDDw8OKioovLy98fHzo6OhaWlqnp6fGxsZFRUXf39/19fXl5eWFhYU5OTk0NDRxcXG/v79MTEw1NTWjo6O8vLwNDQ07Ozve3t46Ojrn5+d3d3c+Pj42NjZra2vLy8tVVVWioqKzs7NJSUkuLi7s7Ozp6emmpqbIyMiHh4dZWVmtra0NDQ4KCgoqrDTYAAABnUlEQVR4Xp3T1Y7jQBCG0foLug1hGmZcZmZmZnj/59iSPdlIWTsT7WfLqpaO6sKW6UmYq0MKF9pJ0kuSpPG3cuz1kvG8vnQyULiGOTrrcAXNTE1UVVTMh0lydEqxUMA8MyJiv5nK+Khysoi2wy7UrFzmd0XGgpVio5F5xkxcGQnOO1xyKH4Qf9Q0hsLCqgC4kk42KkvU0eUzAxU7BmrkjYenLxVLeSYUND7unjj19T67NZE6aH5o4iCEzupWU/PtPFoN9BOw2m+ce37xJYBYD4mZAXT3dq8cXF0QgLkKCpNnMaYj2wzh+o1RU1TGENOQY3Yzx61+cvvO3XsMcJHTfyBLFgXA2t6DH482HytIzC+ehmUsJgNaDuHps8XFNM1Eo1ZCpwS86K/vvHr9JgVSkTro1AC87XTevd/4MGBTdKuhZxrzLWmF8OkzrHZj+QbyFF9aw8a2kMyCLFkm8FKRWAcnXMTYn8dBVH+Z+v4DGhPz1L/tFSMzJpBRH4HK/7qNVFVmpTnaDtcwR98cfm/t/xwuz2q439oJ9CvM1e8/pvwodyv6uYgAAAAASUVORK5CYII=" alt="Line" border="0" /></button>
+            <button id="rectBtn"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACgAAAAiCAIAAACiBwxcAAACTUlEQVR4AWLg5eVjoDvg4uJiBFKtra16enoA3qslh5QgitI6RIzEJsRMIpixE+tgZCMGtmBibEKYGViAqQ005fdOcpKTl6641KPeTVSqu7rq3HO/xTmXJAken89nJLzH41GtVvf7/WQyKUA2m83zP8putwNoit/5fMZ4uVzIuFgsxmNcLpezLMM8FRJQS6USNCJ8POH5xIgu4JMzZGp8Cst8Dwk8UMSIA18Ca5kGh/yKLhlbwJD7/Z6m6fF4RNzzDahLJ372Idfb7dZoNDqdTqVSIXweWHS1vFqtRqPR93R7vd5isUD6go/lY9mEdp5Op+12G5lmE/UPQYJg12w2Q65qoyYCzm/TOBgMhsPhP7t2uVweDgcG6QtTewucq7bA6/rgrWsZm845bCSq3luMfZPCboyyIMZ0qjZaUS296GON4mox9nSFkcReGuSALTG0trcQ1d/1EXBo7lJ88/iPiQEWVSI2CZtSErrHTio7Oz4KLuWfOkyos3WCJm/y2C8jyMhQx7O1KD8F/x6YzNBVMOK+UgiXWq3GeqdUtBhDr7+Xt9stHp1zQelEMNTL0+kEpTGn2SwfK3ZY8MbjceE76ff70Jv3GQSKVTKxjI+63e58PoetUPxCS6bOAWS9XofNcSPAo8UYy6TbbDZbrVbhF3K9XtmhwccKLrAkueBg9poNRoia20tg/6rwq/ue32NSP7J8Pb4XcM33Y77VKLwYwvsrgVL+aVStiCiMHsIReL1eI9mzLINH/Zv3n1G9m3ru3DkQh4eHh4HugJeXFwByhf73rd61iwAAAABJRU5ErkJggg==" alt="Rectangle" border="0" /></button>
+            <button id="ovalBtn"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACgAAAAiCAMAAAAau2s5AAABxVBMVEX////8/Pz9/f0AAAD6+vr7+/v+/v75+fn4+Pj39/f29vb19fVZWVnj4+O/v7/CwsLIyMhaWlrq6up/f3+jo6OioqLExMTm5ubDw8MjIyPAwMAlJSWWlpbn5+ebm5t5eXksLCyHh4fi4uLy8vKoqKi9vb0tLS3v7+9CQkLNzc3z8/Px8fHs7Oy3t7fw8PDKysrHx8cvLy/c3NzJycnu7u5+fn4hISE/Pz/l5eW5ubmkpKT09PTk5ORiYmK4uLhYWFhTU1NcXFzg4OBzc3NQUFC+vr5gYGDBwcEMDAyBgYHQ0NCysrIwMDBbW1sFBQYNDQ2hoaFsbGxeXl6UlJTPz88RERGzs7Pa2tooKChjY2OKiorY2Nh0dHTo6OgdHR3p6end3d2rq6s4ODhRUVEYGBjV1dXb29sICAgCAgI1NTWnp6dUVFQpKSmPj48UFBSCgoJSUlKZmZl8fHytra17e3phYWE3NzeJiYnX19dwcHCpqakSEhLe3t4EBAQmJiaenp7FxcUWFhbS0tLLy8tLS0tFRUXW1tYbGxtycnI7OzuMjIwzMzMXFxdERERPT08uLi4xMTEyMjLt7e12dnbf39+VlZUHBwcImmOwAAACWklEQVR4Xo2UhY7sPAxGPztQGl5kZmZmuMzMzMzMzPTD8950ZmenlXZXcyqlsnpkK3UcbBJ5sRM77jUWjo8XFq1D4a4nBZcgipEHvQIiDs9WRIoUr4FysWTEjXBswnqwlRbjkIr02gAsUZ7OSGCtmY2QeecwAQNQKDViOWTgK+dYlgOiwoqHABmPQ2Iml79z27aymIiYgxkJyiLNBNiVM3PJSDISiSTntm8FkDFlNqO2HMdib1/T3VZxqK+2uba2eduwONzVdNBStsyJUkvHapDzSSHEmUTL8VQqdXLwtDBs7nDbKSiS7enEnm9ldUUHGpAh2li0IK798y85IZHbt9SIE7tLQJI1E7G0NdoW95/be8EKldbRiBB1na43oZiZmJQ14TrPNpjqblBUiF4dPnJUK9a+56NBmnqPiSEPekVkI86OnALpEGDERIEbFuvPfj4PpcMwpsWQC8qJEvWzrfNQHPYY8YsFHlRQnIxcvlLFIZE19V+/cdOBWum1v5lbQtxOdzerkUTLghB3AqUJ0uoeuy8ePEwByJxCBvDoccXTmh4JDmS0CV0jz1+8jLV50L6NzlexOvF65g20psDBVcruePtOCPH+AxQRKYx9NNGn/gZLQwdEJqm96eovX8Xi1Aafqe/iR2V1D5HiwCgwMZGSwGBN38+KMp+KX7+rGWwp4lxnlGZmJR1H2n/qJ0dLqswzGo12S8t1JCMkLv83RhDKTFiwhZydLGNnR5DZj9OiQtyIS3CllMpHroJSJJ30TTGAPEgYsTIRKy8t9jHrqpTGBv4T+V6k//8FO3hQLKJ2zlgAAAAASUVORK5CYII=" alt="Oval" border="0" /></button>
+            <button id="zoomInBtn">Zoom In</button>
+            <button id="zoomOutBtn">Zoom Out</button>
+            <button id="clear">Clear</button>
+        </div>
+
+        <canvas id="drawingCanvas" width="16" height="16" scale="1.0"></canvas>
+
+        <div>
+            <button id="convertBtn">Convert to String</button>
+            <button id="makeShape">Convert to Shape</button>
+            <button id="convertBasic" onClick="createBasic()">BASIC data</button>
+			<BR/>
+			<button id="resize8" onClick="resizeCanvas(8);">8 x 8</button>
+			<button id="resize16" onClick="resizeCanvas(16);">16 x 16</button>
+			<button id="resize24" onClick="resizeCanvas(24);">24 x 24</button>
+			<button id="resize32" onClick="resizeCanvas(32);">32 x 32</button>
+			<button id="resize48" onClick="resizeCanvas(48);">48 x 48</button>
+			<button id="resize64" onClick="resizeCanvas(64);">64 x 64</button>
+        </div>
+
+        <pre id="output"></pre>
+
+        <script>
+            const canvas = document.getElementById("drawingCanvas");
+            const ctx = canvas.getContext("2d");
+            ctx.imageSmoothingEnabled = false;
+
+            ctx.fillStyle = "rgb(255,255,255)";
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            let isDrawing = false;
+            let startX = 0;
+            let startY = 0;
+            let tool = "pencil";
+            let scale = 1;
+            let scaledWidth = canvas.width;
+            let scaledHeight = canvas.height;
+
+            let originX = canvas.width / 2;
+            let originY = canvas.height / 2;
+
+            // Create an off-screen canvas for saving the drawing state
+            let backupCanvas = document.createElement("canvas");
+            let backupCtx = backupCanvas.getContext("2d");
+            backupCanvas.width = canvas.width;
+            backupCanvas.height = canvas.height;
+            backupCtx.imageSmoothingEnabled = false;
+
+            let outputCanvas = document.createElement("canvas");
+            let outputCtx = backupCanvas.getContext("2d");
+            outputCtx.imageSmoothingEnabled = false;
+            outputCanvas.height = canvas.height;
+            outputCanvas.width = canvas.width;
+
+            clear();
+            zoomIn();
+            zoomIn();
+            zoomIn();
+            zoomIn();
+
+			function resizeCanvas(newSize) {
+				canvas.width = newSize;
+				canvas.height = newSize;
+				outputCanvas.width = newSize;
+				outputCanvas.height = newSize;
+				backupCanvas.width = newSize;
+				backupCanvas.height = newSize;
+				updateCanvasScale();
+			}
+
+            function startDrawing(e) {
+                const [x, y] = adjustCoordinates(e);
+                if (e.altKey) {
+                    originX = x;
+                    originY = y;
+                    return;
+                }
+                isDrawing = true;
+                startX = x;
+                startY = y;
+                // Get the image data for the pixel under the cursor
+                const pixel = ctx.getImageData(x, y, 1, 1).data;
+                // Check if the pixel is black (assuming full opacity for simplicity)
+                const isBlack = pixel[0] === 0 || pixel[1] === 0 || pixel[2] === 0; // || pixel[3] === 0;
+
+                console.log("isBlack", isBlack, pixel[0], pixel[1], pixel[2]);
+                if (tool === "pencil") {
+                    // Set the drawing color based on the pixel color
+                    ctx.fillStyle = isBlack ? "rgb(255,255,255)" : "rgb(0,0,0)";
+                    ctx.fillRect(x, y, 1, 1);
+                }
+            }
+
+            function draw(e) {
+                if (!isDrawing) return;
+                const [x, y] = adjustCoordinates(e);
+                switch (tool) {
+                    case "pencil":
+                        ctx.fillRect(x, y, 1, 1);
+                        break;
+                    case "line":
+                    case "rect":
+                    case "oval":
+                        redrawCanvas();
+                        if (tool === "line") {
+                            drawLineBresenham(ctx, startX, startY, x, y);
+                        } else if (tool === "rect") {
+                            drawLineBresenham(ctx, startX, startY, startX, y);
+                            drawLineBresenham(ctx, startX, y, x, y);
+                            drawLineBresenham(ctx, x, y, x, startY);
+                            drawLineBresenham(ctx, startX, startY, x, startY);
+                        } else if (tool === "oval") {
+                            drawOvalAliased(ctx, startX, startY, x, y);
+                        }
+                        break;
+                }
+            }
+
+            // Function to adjust mouse coordinates based on the zoom level
+            function adjustCoordinates(e) {
+                const rect = canvas.getBoundingClientRect();
+                const x = Math.round((e.clientX - rect.left) / scale);
+                const y = Math.round((e.clientY - rect.top) / scale);
+                return [x, y];
+            }
+
+            function adjustCanvasForPixelArt(canvas) {
+                // Determine the device's pixel ratio
+                const pixelRatio = window.devicePixelRatio || 1;
+
+                // Original CSS size of the canvas (could be set to your specific needs)
+                const cssWidth = canvas.width;
+                const cssHeight = canvas.height;
+
+                // Adjust canvas size for high DPI display
+                canvas.width = cssWidth * pixelRatio;
+                canvas.height = cssHeight * pixelRatio;
+
+                // Scale the context to compensate for the increased canvas size
+                const ctx = canvas.getContext("2d");
+                ctx.scale(pixelRatio, pixelRatio);
+
+                // Optional: Disable image smoothing to ensure pixelated graphics
+                ctx.imageSmoothingEnabled = false;
+            }
+
+            function endDrawing() {
+                if (isDrawing) {
+                    // When the drawing ends, save the current state to the backup canvas
+                    backupCtx.clearRect(0, 0, backupCanvas.width, backupCanvas.height);
+                    backupCtx.drawImage(canvas, 0, 0);
+                }
+				// plot the origin
+                //ctx.fillStyle = "rgb(255,0,0)";
+                //ctx.fillRect(originX, originY, 1, 1);
+                isDrawing = false;
+            }
+
+            function redrawCanvas() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                // Restore the drawing from the backup canvas
+                ctx.drawImage(backupCanvas, 0, 0);
+            }
+
+            function drawOvalAliased(ctx, startX, startY, x, y, color = "rgb(0,0,0)") {
+                ctx.fillStyle = color;
+                // Calculate the center of the oval
+                const centerX = (startX + x) / 2;
+                const centerY = (startY + y) / 2;
+
+                // Calculate the radii of the oval
+                const radiusX = Math.abs(x - startX) / 2;
+                const radiusY = Math.abs(y - startY) / 2;
+
+                let xPos, yPos;
+
+                // Drawing the oval
+                for (let angle = 0; angle < Math.PI * 2; angle += 0.01) {
+                    xPos = centerX + radiusX * Math.cos(angle);
+                    yPos = centerY + radiusY * Math.sin(angle);
+                    ctx.fillRect(Math.round(xPos), Math.round(yPos), 1, 1);
+                }
+            }
+
+            function zoomIn() {
+                scale *= 2;
+                updateCanvasScale();
+            }
+
+            function zoomOut() {
+                scale /= 2;
+                updateCanvasScale();
+            }
+
+            function updateCanvasScale() {
+                scaledWidth = canvas.width * scale;
+                scaledHeight = canvas.height * scale;
+                canvas.style.width = `${scaledWidth}px`;
+                canvas.style.height = `${scaledHeight}px`;
+            }
+
+            function clear() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                ctx.fillStyle = "rgba(255,255,255,255)";
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                backupCtx.clearRect(0, 0, canvas.width, canvas.height);
+                backupCtx.fillStyle = "rgba(255,255,255,255)";
+                backupCtx.fillRect(0, 0, canvas.width, canvas.height);
+            }
+
+            function drawLineBresenham(ctx, x0, y0, x1, y1, color = "rgb(0,0,0)") {
+                ctx.fillStyle = color;
+                let dx = Math.abs(x1 - x0),
+                    sx = x0 < x1 ? 1 : -1;
+                let dy = -Math.abs(y1 - y0),
+                    sy = y0 < y1 ? 1 : -1;
+                let err = dx + dy,
+                    e2;
+
+                while (true) {
+                    ctx.fillRect(x0, y0, 1, 1); // Draw pixel at (x0, y0)
+                    if (x0 === x1 && y0 === y1) break;
+                    e2 = 2 * err;
+                    if (e2 >= dy) {
+                        err += dy;
+                        x0 += sx;
+                    }
+                    if (e2 <= dx) {
+                        err += dx;
+                        y0 += sy;
+                    }
+                }
+            }
+
+            function convertCanvasToString() {
+                outputCtx.drawImage(
+                    canvas,
+                    0,
+                    0,
+                    canvas.width,
+                    canvas.height,
+                    0,
+                    0,
+                    outputCanvas.width,
+                    outputCanvas.height
+                );
+
+                const imageData = outputCtx.getImageData(0, 0, outputCanvas.width, outputCanvas.height);
+                const pixels = imageData.data;
+                const width = imageData.width;
+                const height = imageData.height;
+                let resultString = "";
+
+                for (let y = 0; y < height; y++) {
+                    for (let x = 0; x < width; x++) {
+                        const index = (y * width + x) * 4; // Calculate index within the image data array
+                        const r = pixels[index]; // red value of the pixel
+                        const g = pixels[index + 1]; // green value of the pixel
+                        const b = pixels[index + 2]; // blue value of the pixel
+                        resultString += r == 0 ? "#" : "."; // Append '#' for drawn pixels and '.' for empty
+                        //console.log(r, g, b);
+                    }
+                    resultString += "\n"; // New line at the end of each row
+                }
+                document.getElementById("output").textContent = resultString;
+                return resultString;
+            }
+
+            function convertCanvasToShapeData() {
+                const move_right = 0b001;
+                const move_left = 0b011;
+                const move_up = 0b000;
+                const move_down = 0b010;
+                const plot_up = 0b100;
+                const plot_down = 0b110;
+                const plot_right = 0b101;
+                const plot_left = 0b111;
+
+                outputCtx.drawImage(
+                    canvas,
+                    0,
+                    0,
+                    canvas.width,
+                    canvas.height,
+                    0,
+                    0,
+                    outputCanvas.width,
+                    outputCanvas.height
+                );
+
+                const imageData = backupCtx.getImageData(0, 0, outputCanvas.width, outputCanvas.height);
+                const pixels = imageData.data;
+                const width = imageData.width;
+                const height = imageData.height;
+                let resultString = "";
+
+                let commands = [];
+                // TODO: error in the next line if the canvas isn't an even number of rows
+                for (let y = 0; y < height; y = y + 2) {
+                    for (let x = 0; x < width; x++) {
+                        const index = (y * width + x) * 4; // Calculate index within the image data array
+                        const r = pixels[index]; // red value of the pixel
+                        if (r == 0) {
+                            // plot right
+                            commands.push(plot_right);
+                        } else {
+                            // move right
+                            commands.push(move_right);
+                        }
+                    }
+                    commands.push(move_down);
+                    // next row, from right to left
+                    for (let x = width - 1; x >= 0; x--) {
+                        const index = ((y + 1) * width + x) * 4; // Calculate index within the image data array
+                        const r = pixels[index]; // red value of the pixel
+                        if (r == 0) {
+                            // plot left
+                            commands.push(plot_left);
+                        } else {
+                            commands.push(move_left);
+                        }
+                    }
+                    commands.push(move_down);
+                }
+                commands.push(0);
+                var out = chunk(commands, 17);
+                document.getElementById("output").textContent = out.join("\n");
+                return commands;
+            }
+
+            const chunk = (arr, size) =>
+                Array.from({ length: Math.ceil(arr.length / size) }, (v, i) => arr.slice(i * size, i * size + size));
+
+            function packCommands(commands) {
+                // take an array of commands (ints 0-7) and pack them into the top and bottom of a byte
+                // first three bits = first command, second three bits = second command
+                // two high bits = left both zero
+                var bytes = new Uint8Array(canvas.width * canvas.height + 6);
+                bytes[0] = 1; // number of shapes
+                bytes[1] = 0; // unused
+                bytes[2] = 4; // offset to shape 1 (low order byte)
+                bytes[3] = 0; // offset to shape 1 (high oder byte)
+                // index 4 is the start of the shape data
+                var index = 4;
+                for (var i = 0; i < commands.length; i += 2) {
+                    var c1 = commands[i];
+                    // TODO: handle case where this gives an error
+                    var c2 = commands[i + 1];
+                    bytes[4 + i] = (c2 << 3) | c1;
+                    console.log(c2, c1, bytes[4 + i]);
+                }
+                console.log(bytes);
+                return bytes;
+            }
+
+            function packIntegersToUint8Array(integers) {
+                // Calculate the size of the resulting Uint8Array
+                // Each element needs 3 bits, so two elements make a byte.
+                // If there's an odd number of integers, the last one still requires a full byte.
+				// ignoring the special case of using the two high bits for now
+                const size = Math.ceil(integers.length / 2) + 4;
+                const packedArray = new Uint8Array(size);
+                packedArray[0] = 1; // number of shapes
+                packedArray[1] = 0; // unused
+                packedArray[2] = 4; // offset to shape 1 (low order byte)
+                packedArray[3] = 0; // offset to shape 1 (high oder byte)
+
+                integers.forEach((value, index) => {
+                    // Calculate which byte this value should go into
+                    const byteIndex = Math.floor(index / 2);
+
+                    // Ensure the value is within the expected range
+                    if (value === 0) {
+                        packedArray[byteIndex + 4] = 0;
+                        return;
+                    }
+
+                    if (value < 1 || value > 7) {
+                        throw new RangeError("Integer values must be in the range of 1-7.");
+                    }
+
+                    // Calculate which byte this value should go into
+                    //const byteIndex = Math.floor(index / 2);
+
+                    if (index % 2 === 0) {
+                        // If it's an even index (or the first of a pair),
+                        // shift the value left by 3 bits and add it to the byte.
+                        packedArray[byteIndex + 4] = value << 3;
+                    } else {
+                        // If it's an odd index (or the second of a pair),
+                        // add the value to the byte without shifting (occupies the lowest 3 bits).
+                        packedArray[byteIndex + 4] |= value;
+                    }
+                });
+
+                return packedArray;
+            }
+
+            function createBasic() {
+                let array = packIntegersToUint8Array(convertCanvasToShapeData());
+                let result = "1000 REM SHAPE TABLE\n";
+                result += "1010 DATA ";
+                lineNum = 1010;
+                array.forEach((byte, index) => {
+                    // Convert byte to hex format, padded with a leading zero if necessary
+                    //let val = byte.toString(16).padStart(2, "0").toUpperCase();
+                    let val = byte.toString(10);
+                    // Add the hex byte to the result string
+                    result += val;
+                    // Determine if a comma should be added
+                    let isLastByteInLine = (index + 1) % 8 === 0;
+                    let isLastByteInArray = index === array.length - 1;
+
+                    // Add a comma if it's not the last byte in the line or the last byte in the array
+                    if (!isLastByteInLine && !isLastByteInArray) {
+                        result += ",";
+                    }
+
+                    // Add a newline after every 8 bytes, except after the last byte
+                    if (isLastByteInLine && !isLastByteInArray) {
+                        //let lineNum = 1020 + index * 10;
+                        result += "\n" + ++lineNum + " DATA ";
+                    }
+                });
+                document.getElementById("output").textContent = result;
+                return result;
+            }
+
+            document.getElementById("pencilBtn").addEventListener("click", () => (tool = "pencil"));
+            document.getElementById("lineBtn").addEventListener("click", () => (tool = "line"));
+            document.getElementById("rectBtn").addEventListener("click", () => (tool = "rect"));
+            document.getElementById("ovalBtn").addEventListener("click", () => (tool = "oval"));
+            document.getElementById("zoomInBtn").addEventListener("click", zoomIn);
+            document.getElementById("zoomOutBtn").addEventListener("click", zoomOut);
+            document.getElementById("convertBtn").addEventListener("click", convertCanvasToString);
+            document.getElementById("clear").addEventListener("click", clear);
+            document.getElementById("makeShape").addEventListener("click", convertCanvasToShapeData);
+            canvas.addEventListener("mousedown", startDrawing);
+            canvas.addEventListener("mousemove", draw);
+            canvas.addEventListener("mouseup", endDrawing);
+            canvas.addEventListener("mouseout", endDrawing);
+        </script>
+    </body>
+</html>
