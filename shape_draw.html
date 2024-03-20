@@ -13,38 +13,75 @@
         </style>
     </head>
     <body>
-        <div>
-            <button id="pencilBtn">
+        <div style="position: absolute; top: 0px; right: 10px">
+            <button id="saveDrawing" onclick="saveDrawing()">Save as...</button>
+            <select id="loadSelect"></select>
+        </div>
+        <div style="display: grid; left: 0px; top: 20px">
+            <button id="pencilBtn" style="left: 0px; width: 60px; height: 40px">
                 <img
-                    src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACgAAAAiCAAAAAAIDsTXAAACL0lEQVR4AY3UQ7jlShSG4bq2bc6vp9e2rVnbtm0bG23b1rFt20yq1qq/k32M6ud8m0neGOJe0aPuEWJZ0IWLThfcAv8uBQacT8vIS2evrnTsNfSgIAeeg03EzM0f95sIYIZssKRSxGTjvAPPQ6FzFZnZGRmZ5eQuAQDjYgDKTkzD/+lPX3713jplSyJAkwECk8UHX37yQW9fDpPUYBd2XrXWGrJ0jDiRm5I1WYTAbmgHqZ1jUsj5v//uMijMFkGw6rn7JbJtI0l8v7cMZfsH/hwDZRlWrRpl3elXxYtniy48MSCtmkiheyjrlPfbhZvn/PjjF2IoSJE2QLIxXsQg/e8n7nxntVRE3D3U2i4ZKZJRlzNUHKm2SGsDJGT9339HBSRmilgQ3AwwQUyG0mX7+v+eCjZDbjgrZqAeyQ8Pzm5kbYQam76fHapqkSJGQzKMEBgl4mHZ0Su+XNtYr81LlKVDRQpszBYnK+ssA9SakfFfvy3FloUpIgZWo4YBEqLETLAuOzjwp3gtLQPkABxdnF10+cERzWe5W0hMiBSv//b7bz/NCAErYpiW6EKnh3/NQgNp1gaoA/CBZ8XI3AZpKdY3glG33nH/mHBYDFcZILRC5F0v/5kE2wJghsyEcDEsrYZIGSA1Q6Xz1waDFXO30H2kKHZTpCxpEzORcr+aHzGkZOCREoQO6ebvjgU7cMJOn9/nd/N5nDb7PF6Pd7PHfXm8Pp87ybdzohD3iR51/3W3Ly7tksdxXgAAAABJRU5ErkJggg=="
+                    src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABwAAAAUCAQAAAA0V5VyAAAA8ElEQVR42tXRvyuEAQCA4Ud3yqEjhYRuonQp6brBZLNYnMGPpIy3G4jdTXfZTDJYhLvFIIa7wqSEC/f9N8ZL99113+jdn+n1DxqTExO5SVWBfRFLGnQlsO5PMUlx7ZtSlTdgFYBZh+58C9SdSghnNYGGNEDKmR8Xdi0YN+PejtamVQUC2wCcKEoBGFK1EcJqTRZW1qOyvlDWaMcmFDUU9EdhcXnvri0ShY268SKnpy3bCp/64Nww0RjHbvVGZzxbEValM+NTVmsZga9OjEsHaJYwjzV7RnQs40PBsrSsTSVvKnp01ZySJ3Wvyo4sdcd+AVHMR3iVEvg+AAAAAElFTkSuQmCC"
                     alt="Pencil"
                     border="0"
                 />
             </button>
-            <button id="lineBtn"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACgAAAAiCAMAAAAau2s5AAABF1BMVEX+/v7////9/f37+/v6+vr8/PwAAAD5+fm5ubn29vb4+Pj39/e4uLj09PS1tbW+vr5LS0vCwsK6urq0tLTz8/Ovr6/w8PC9vb3x8fHAwMCwsLDBwcHj4+PJycm2traqqqqpqanv7+/y8vKGhoZOTk5KSkqsrKykpKQODg5gYGCPj4+lpaUwMDDu7u7Hx8eAgIDDw8OKioovLy98fHzo6OhaWlqnp6fGxsZFRUXf39/19fXl5eWFhYU5OTk0NDRxcXG/v79MTEw1NTWjo6O8vLwNDQ07Ozve3t46Ojrn5+d3d3c+Pj42NjZra2vLy8tVVVWioqKzs7NJSUkuLi7s7Ozp6emmpqbIyMiHh4dZWVmtra0NDQ4KCgoqrDTYAAABnUlEQVR4Xp3T1Y7jQBCG0foLug1hGmZcZmZmZnj/59iSPdlIWTsT7WfLqpaO6sKW6UmYq0MKF9pJ0kuSpPG3cuz1kvG8vnQyULiGOTrrcAXNTE1UVVTMh0lydEqxUMA8MyJiv5nK+Khysoi2wy7UrFzmd0XGgpVio5F5xkxcGQnOO1xyKH4Qf9Q0hsLCqgC4kk42KkvU0eUzAxU7BmrkjYenLxVLeSYUND7unjj19T67NZE6aH5o4iCEzupWU/PtPFoN9BOw2m+ce37xJYBYD4mZAXT3dq8cXF0QgLkKCpNnMaYj2wzh+o1RU1TGENOQY3Yzx61+cvvO3XsMcJHTfyBLFgXA2t6DH482HytIzC+ehmUsJgNaDuHps8XFNM1Eo1ZCpwS86K/vvHr9JgVSkTro1AC87XTevd/4MGBTdKuhZxrzLWmF8OkzrHZj+QbyFF9aw8a2kMyCLFkm8FKRWAcnXMTYn8dBVH+Z+v4DGhPz1L/tFSMzJpBRH4HK/7qNVFVmpTnaDtcwR98cfm/t/xwuz2q439oJ9CvM1e8/pvwodyv6uYgAAAAASUVORK5CYII=" alt="Line" border="0" /></button>
-            <button id="rectBtn"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACgAAAAiCAIAAACiBwxcAAACTUlEQVR4AWLg5eVjoDvg4uJiBFKtra16enoA3qslh5QgitI6RIzEJsRMIpixE+tgZCMGtmBibEKYGViAqQ005fdOcpKTl6641KPeTVSqu7rq3HO/xTmXJAken89nJLzH41GtVvf7/WQyKUA2m83zP8putwNoit/5fMZ4uVzIuFgsxmNcLpezLMM8FRJQS6USNCJ8POH5xIgu4JMzZGp8Cst8Dwk8UMSIA18Ca5kGh/yKLhlbwJD7/Z6m6fF4RNzzDahLJ372Idfb7dZoNDqdTqVSIXweWHS1vFqtRqPR93R7vd5isUD6go/lY9mEdp5Op+12G5lmE/UPQYJg12w2Q65qoyYCzm/TOBgMhsPhP7t2uVweDgcG6QtTewucq7bA6/rgrWsZm845bCSq3luMfZPCboyyIMZ0qjZaUS296GON4mox9nSFkcReGuSALTG0trcQ1d/1EXBo7lJ88/iPiQEWVSI2CZtSErrHTio7Oz4KLuWfOkyos3WCJm/y2C8jyMhQx7O1KD8F/x6YzNBVMOK+UgiXWq3GeqdUtBhDr7+Xt9stHp1zQelEMNTL0+kEpTGn2SwfK3ZY8MbjceE76ff70Jv3GQSKVTKxjI+63e58PoetUPxCS6bOAWS9XofNcSPAo8UYy6TbbDZbrVbhF3K9XtmhwccKLrAkueBg9poNRoia20tg/6rwq/ue32NSP7J8Pb4XcM33Y77VKLwYwvsrgVL+aVStiCiMHsIReL1eI9mzLINH/Zv3n1G9m3ru3DkQh4eHh4HugJeXFwByhf73rd61iwAAAABJRU5ErkJggg==" alt="Rectangle" border="0" /></button>
-            <button id="ovalBtn"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACgAAAAiCAMAAAAau2s5AAABxVBMVEX////8/Pz9/f0AAAD6+vr7+/v+/v75+fn4+Pj39/f29vb19fVZWVnj4+O/v7/CwsLIyMhaWlrq6up/f3+jo6OioqLExMTm5ubDw8MjIyPAwMAlJSWWlpbn5+ebm5t5eXksLCyHh4fi4uLy8vKoqKi9vb0tLS3v7+9CQkLNzc3z8/Px8fHs7Oy3t7fw8PDKysrHx8cvLy/c3NzJycnu7u5+fn4hISE/Pz/l5eW5ubmkpKT09PTk5ORiYmK4uLhYWFhTU1NcXFzg4OBzc3NQUFC+vr5gYGDBwcEMDAyBgYHQ0NCysrIwMDBbW1sFBQYNDQ2hoaFsbGxeXl6UlJTPz88RERGzs7Pa2tooKChjY2OKiorY2Nh0dHTo6OgdHR3p6end3d2rq6s4ODhRUVEYGBjV1dXb29sICAgCAgI1NTWnp6dUVFQpKSmPj48UFBSCgoJSUlKZmZl8fHytra17e3phYWE3NzeJiYnX19dwcHCpqakSEhLe3t4EBAQmJiaenp7FxcUWFhbS0tLLy8tLS0tFRUXW1tYbGxtycnI7OzuMjIwzMzMXFxdERERPT08uLi4xMTEyMjLt7e12dnbf39+VlZUHBwcImmOwAAACWklEQVR4Xo2UhY7sPAxGPztQGl5kZmZmuMzMzMzMzPTD8950ZmenlXZXcyqlsnpkK3UcbBJ5sRM77jUWjo8XFq1D4a4nBZcgipEHvQIiDs9WRIoUr4FysWTEjXBswnqwlRbjkIr02gAsUZ7OSGCtmY2QeecwAQNQKDViOWTgK+dYlgOiwoqHABmPQ2Iml79z27aymIiYgxkJyiLNBNiVM3PJSDISiSTntm8FkDFlNqO2HMdib1/T3VZxqK+2uba2eduwONzVdNBStsyJUkvHapDzSSHEmUTL8VQqdXLwtDBs7nDbKSiS7enEnm9ldUUHGpAh2li0IK798y85IZHbt9SIE7tLQJI1E7G0NdoW95/be8EKldbRiBB1na43oZiZmJQ14TrPNpjqblBUiF4dPnJUK9a+56NBmnqPiSEPekVkI86OnALpEGDERIEbFuvPfj4PpcMwpsWQC8qJEvWzrfNQHPYY8YsFHlRQnIxcvlLFIZE19V+/cdOBWum1v5lbQtxOdzerkUTLghB3AqUJ0uoeuy8ePEwByJxCBvDoccXTmh4JDmS0CV0jz1+8jLV50L6NzlexOvF65g20psDBVcruePtOCPH+AxQRKYx9NNGn/gZLQwdEJqm96eovX8Xi1Aafqe/iR2V1D5HiwCgwMZGSwGBN38+KMp+KX7+rGWwp4lxnlGZmJR1H2n/qJ0dLqswzGo12S8t1JCMkLv83RhDKTFiwhZydLGNnR5DZj9OiQtyIS3CllMpHroJSJJ30TTGAPEgYsTIRKy8t9jHrqpTGBv4T+V6k//8FO3hQLKJ2zlgAAAAASUVORK5CYII=" alt="Oval" border="0" /></button>
-            <button id="zoomInBtn">Zoom In</button>
-            <button id="zoomOutBtn">Zoom Out</button>
-            <button id="clear">Clear</button>
+            <button id="lineBtn" style="left: 0px; width: 60px; height: 40px">
+                <img
+                    src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA8AAAAPCAQAAACR313BAAAAJUlEQVR42mPAA7wZ0nBL+jNcBSrAAfyAkv7DQ9J/oCUxwRZ8kgBRfRSBbVWEfAAAAABJRU5ErkJggg=="
+                    alt="Line"
+                    border="0"
+                />
+            </button>
+            <button id="rectBtn" style="left: 0px; width: 60px; height: 40px">
+                <img
+                    src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAARCAQAAAB6UzRyAAAAH0lEQVR42mNg+E8EJF4RHkCCopujiqiuiPJooVpSAQC7OnoJqmh4RQAAAABJRU5ErkJggg=="
+                    alt="Rectangle"
+                    border="0"
+                />
+            </button>
+            <button id="ovalBtn" style="left: 0px; width: 60px; height: 40px">
+                <img
+                    src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABoAAAATCAQAAAAkTNWNAAABIklEQVR42p3NvyvmcQDA8ddzT3fndIOLG+4Ww12ZDAYDGSSFgTIoipHCoKSUQSZSiixIj/woKeqZRIpHPI/ioUxf389/YzDoSQ/fvMb38lYipdGodcfyHt04tW1Sm2/KqDDiXBAU7Fg1b1nGS7k1o9obTc4FWUP+KFWl25ZYUZ8SPSJXupTXICuYAqBVLKvG+75bFYwClfLyfvlY2oHIPxgUdEqmVmwedhWkJbWlKMWdFckNC/4SmZNcn6Duk6c9eWlJZRSlGBJ0SKbWkwWoVHCtysfS9kX+A21iR6q976tlwTgAvSI57cqrdySYluJVi5zgUL8apX7qtCH2YMAbP4y5FAQ5m5bMWbTmRCwomvVbGV80m5Bx5lbk3oV90zpUAADPDvpXd0migyQAAAAASUVORK5CYII="
+                    alt="Oval"
+                    border="0"
+                />
+            </button>
+            <button id="zoomInBtn" style="left: 0px; width: 60px; height: 40px">
+                <img
+                    src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABMAAAATCAQAAADYWf5HAAABAklEQVR42o3OL0tDURjA4UfuQC4mRQzqndEgFpNRwa7gn2wzmCxqsWiw6NSZTYaxDzDYil4HS2NomIPzbTTIPbAx5hNOOb+X91XYUdXW1/FiX4lRC2r6Kg5s2XWtp2V1NPpQl4lmVX1Zg6imbhpEU+7kUuJNfRmAIyVAquNEoaoi6lsBcKqh0HY4JtsQzMSPbXBkYCD4fV2CsqAM0LEHEpnMt02ZFKwLZgFe3IxZeixX2NeLMy6kgETTuUJJy7Mpw850zROt+nQvFSXOBK8SiNbkOk5tKFt3rKkrFzwNh6kTDUEQ5M7NW/QmeJQYMSMzB/AXPkhMsORdUPlveGWiZS23Pzo1RYNSBLaAAAAAAElFTkSuQmCC"
+                />
+            </button>
+            <button id="zoomOutBtn" style="left: 0px; width: 60px; height: 40px">
+                <img
+                    src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABMAAAATCAQAAADYWf5HAAAA7UlEQVR42o3KsUpCYQBA4S+uEJcmIxoqXRvCxScocC+woNHNwclFWlpqaCkrm50axAcQdKmb4CRSgwT3bWqIH/QK9p31CCo6xuYmuqpyZO3qmWs7d+zUjZmRw+z0oa9AkNfx5ciCnr5NizbcS8SCirmCrNhEXdDRtlrDQDB2YbWy1BbA3Am49B26AkWpIsDEGcgphGJQksoDdN1arSYRVM3kZUWGWoKckRcbljVN7SA49OlBTBBpSr2KLDiSmGgoKyqpGZpKpJ6Xx1jdQOo3iZYde96knkQythRsA/yNjyJr7HuXav93vLbWgZG7H0qYQP0ocnGnAAAAAElFTkSuQmCC"
+                />
+            </button>
+            <button id="clear" style="left: 0px; width: 60px; height: 40px">
+                <img
+                    src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABMAAAAXCAQAAABDyLxRAAABF0lEQVR42pXQvyvEcRzH8QfuB9+vlD9AdoWSDBaTTAbFZOEPUAwWpSyKsikuZToZZZDhRsVydWXBlc1foO6uvieldN0nn27xfC3v4dXr9X6/CcyrevPyq7obI3pyZd8AYETFup7cWxY4t0Vg2UZHj05sdHXnsjtPcuhCXVmppyqelKxAn1cTerPrFICaWYwax4ApMA0OHEE/aEqxYBNjjsGZIaRasa2tKFDURqoJOcGWKQjkfCPRDGmtjq0oJhFKNSRRacEX3dJot1BalIFEI7JFaW2ILx1GFqfFl7bEaXkZ8nLi3YS08DV/S5PIVpAhQZzm0w4+7OHdEVI0AZhTkyJmSZVA3q0H5UjXnm1DYNCitUirZvyPHz0/YaPoSZd8AAAAAElFTkSuQmCC"
+                />
+            </button>
+            <button id="fill" style="left: 0px; width: 60px; height: 40px">Fill</button>
         </div>
 
-        <canvas id="drawingCanvas" width="16" height="16" scale="1.0"></canvas>
-
-        <div>
-            <button id="convertBtn">Convert to String</button>
-            <button id="makeShape">Convert to Shape</button>
-            <button id="convertBasic" onClick="createBasic()">BASIC data</button>
-			<BR/>
-			<button id="resize8" onClick="resizeCanvas(8);">8 x 8</button>
-			<button id="resize16" onClick="resizeCanvas(16);">16 x 16</button>
-			<button id="resize24" onClick="resizeCanvas(24);">24 x 24</button>
-			<button id="resize32" onClick="resizeCanvas(32);">32 x 32</button>
-			<button id="resize48" onClick="resizeCanvas(48);">48 x 48</button>
-			<button id="resize64" onClick="resizeCanvas(64);">64 x 64</button>
+        <div style="position: absolute; top: 20px; left: 82px">
+            <div style="display: grid">
+                <canvas id="drawingCanvas" width="16" height="16" scale="1.0"></canvas>
+                <img <div />
+                <button id="convertBtn">Convert to String</button>
+                <button id="makeShape">Convert to Shape</button>
+                <button id="describeShape" onclick="describeShape()">Describe Shape</button>
+                <button id="convertBasic" onclick="createBasic()">BASIC data</button>
+                <button id="downloadShape" onclick="downloadShapeAsBinaryFile()">Download Shape</button><br />
+                <button id="resize8" onclick="resizeCanvas(8);">8 x 8</button>
+                <button id="resize16" onclick="resizeCanvas(16);">16 x 16</button>
+                <button id="resize24" onclick="resizeCanvas(24);">24 x 24</button>
+                <button id="resize32" onclick="resizeCanvas(32);">32 x 32</button>
+                <button id="resize48" onclick="resizeCanvas(48);">48 x 48</button>
+                <button id="resize64" onclick="resizeCanvas(64);">64 x 64</button>
+            </div>
+            <pre id="output"></pre>
         </div>
-
-        <pre id="output"></pre>
 
         <script>
             const canvas = document.getElementById("drawingCanvas");
@@ -84,15 +121,18 @@
             zoomIn();
             zoomIn();
 
-			function resizeCanvas(newSize) {
-				canvas.width = newSize;
-				canvas.height = newSize;
-				outputCanvas.width = newSize;
-				outputCanvas.height = newSize;
-				backupCanvas.width = newSize;
-				backupCanvas.height = newSize;
-				updateCanvasScale();
-			}
+            function resizeCanvas(w, h) {
+                if (h == null) {
+                    h = w;
+                }
+                canvas.width = w;
+                canvas.height = h;
+                outputCanvas.width = w;
+                outputCanvas.height = h;
+                backupCanvas.width = w;
+                backupCanvas.height = h;
+                updateCanvasScale();
+            }
 
             function startDrawing(e) {
                 const [x, y] = adjustCoordinates(e);
@@ -101,6 +141,7 @@
                     originY = y;
                     return;
                 }
+                saveCanvasState(canvas);
                 isDrawing = true;
                 startX = x;
                 startY = y;
@@ -109,11 +150,15 @@
                 // Check if the pixel is black (assuming full opacity for simplicity)
                 const isBlack = pixel[0] === 0 || pixel[1] === 0 || pixel[2] === 0; // || pixel[3] === 0;
 
-                console.log("isBlack", isBlack, pixel[0], pixel[1], pixel[2]);
+                //console.log("isBlack", isBlack, pixel[0], pixel[1], pixel[2]);
                 if (tool === "pencil") {
                     // Set the drawing color based on the pixel color
                     ctx.fillStyle = isBlack ? "rgb(255,255,255)" : "rgb(0,0,0)";
                     ctx.fillRect(x, y, 1, 1);
+                }
+
+                if (tool === "fill") {
+                    floodFill(x, y, "000");
                 }
             }
 
@@ -176,7 +221,7 @@
                     backupCtx.clearRect(0, 0, backupCanvas.width, backupCanvas.height);
                     backupCtx.drawImage(canvas, 0, 0);
                 }
-				// plot the origin
+                // plot the origin
                 //ctx.fillStyle = "rgb(255,0,0)";
                 //ctx.fillRect(originX, originY, 1, 1);
                 isDrawing = false;
@@ -302,19 +347,9 @@
                 const plot_right = 0b101;
                 const plot_left = 0b111;
 
-                outputCtx.drawImage(
-                    canvas,
-                    0,
-                    0,
-                    canvas.width,
-                    canvas.height,
-                    0,
-                    0,
-                    outputCanvas.width,
-                    outputCanvas.height
-                );
+                //                outputCtx.drawImage(canvas, 0, 0, canvas.width, canvas.height, 0, 0, outputCanvas.width, outputCanvas.height);
 
-                const imageData = backupCtx.getImageData(0, 0, outputCanvas.width, outputCanvas.height);
+                const imageData = ctx.getImageData(0, 0, outputCanvas.width, outputCanvas.height);
                 const pixels = imageData.data;
                 const width = imageData.width;
                 const height = imageData.height;
@@ -322,34 +357,78 @@
 
                 let commands = [];
                 // TODO: error in the next line if the canvas isn't an even number of rows
-                for (let y = 0; y < height; y = y + 2) {
+                let y = 0;
+                while (y < height) {
+                    //if entire row is empty, skip
+                    let rowIsEmpty = true;
+                    for (let x = 0; x < width; x++) {
+                        const index = (y * width + x) * 4; // Calculate index within the image data array
+                        const r = pixels[index]; // red value of the pixel
+                        if (r == 0) {
+                            rowIsEmpty = false;
+                        }
+                    }
+                    if (rowIsEmpty) {
+                        console.log("row " + y + " is empty");
+                        commands.push(move_down);
+                        y = y + 1;
+                        continue;
+                    }
+
                     for (let x = 0; x < width; x++) {
                         const index = (y * width + x) * 4; // Calculate index within the image data array
                         const r = pixels[index]; // red value of the pixel
                         if (r == 0) {
                             // plot right
-                            commands.push(plot_right);
+                            if (x == width - 1) {
+                                commands.push(plot_right);
+                                commands.push(plot_down);
+                            } else {
+                                commands.push(plot_right);
+                            }
                         } else {
                             // move right
-                            commands.push(move_right);
+                            if (x == width - 1) {
+                                commands.push(move_right);
+                                commands.push(move_down);
+                            } else {
+                                commands.push(move_right);
+                            }
                         }
+                        console.log(x, y, r, intToVectorName(commands[commands.length - 1]));
                     }
-                    commands.push(move_down);
+                    //commands.push(move_left);
+                    //commands.push(move_down);
+
+                    y = y + 1;
                     // next row, from right to left
                     for (let x = width - 1; x >= 0; x--) {
-                        const index = ((y + 1) * width + x) * 4; // Calculate index within the image data array
+                        const index = (y * width + x) * 4; // Calculate index within the image data array
                         const r = pixels[index]; // red value of the pixel
                         if (r == 0) {
-                            // plot left
-                            commands.push(plot_left);
+                            // plot left, or down if we're at the left edge
+                            if (x == 0) {
+                                commands.push(plot_left);
+                                commands.push(plot_down);
+                            } else {
+                                commands.push(plot_left);
+                            }
                         } else {
-                            commands.push(move_left);
+                            if (x == 0) {
+                                commands.push(move_left);
+                                commands.push(move_down);
+                            } else {
+                                commands.push(move_left);
+                            }
                         }
+                        console.log(x, y, r, intToVectorName(commands[commands.length - 1]));
                     }
-                    commands.push(move_down);
+                    //commands.push(move_right);
+                    //commands.push(move_down);
+                    y = y + 1;
                 }
                 commands.push(0);
-                var out = chunk(commands, 17);
+                var out = chunk(commands, width);
                 document.getElementById("output").textContent = out.join("\n");
                 return commands;
             }
@@ -383,7 +462,7 @@
                 // Calculate the size of the resulting Uint8Array
                 // Each element needs 3 bits, so two elements make a byte.
                 // If there's an odd number of integers, the last one still requires a full byte.
-				// ignoring the special case of using the two high bits for now
+                // ignoring the special case of using the two high bits for now
                 const size = Math.ceil(integers.length / 2) + 4;
                 const packedArray = new Uint8Array(size);
                 packedArray[0] = 1; // number of shapes
@@ -452,10 +531,225 @@
                 return result;
             }
 
+            function intToVectorName(i) {
+                let result = "";
+                switch (i) {
+                    case 0:
+                        result += "move up";
+                        break;
+                    case 1:
+                        result += "move right";
+                        break;
+                    case 2:
+                        result += "move down";
+                        break;
+                    case 3:
+                        result += "move left";
+                        break;
+                    case 4:
+                        result += "plot up";
+                        break;
+                    case 5:
+                        result += "plot right";
+                        break;
+                    case 6:
+                        result += "plot down";
+                        break;
+                    case 7:
+                        result += "plot left";
+                        break;
+                }
+                return result;
+            }
+
+            function describeShape() {
+                let commands = convertCanvasToShapeData();
+                let result = "";
+                for (index in commands) {
+                    let command = commands[index];
+                    result += intToVectorName(command) + "\n";
+                }
+                document.getElementById("output").textContent = result;
+                return result;
+            }
+
+            let canvasStates = [];
+
+            function saveCanvasState(canvas) {
+                const dataUrl = canvas.toDataURL();
+                canvasStates.push(dataUrl);
+            }
+
+            function undoCanvasState() {
+                if (canvasStates.length <= 0) return;
+
+                const previousState = canvasStates.pop();
+                const img = new Image();
+                img.onload = () => {
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+                    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                    backupCtx.clearRect(0, 0, backupCanvas.width, backupCanvas.height);
+                    backupCtx.drawImage(img, 0, 0, backupCanvas.width, backupCanvas.height);
+                };
+                img.src = previousState;
+            }
+
+            function loadDrawingOntoCanvas(name) {
+                let savedDataUrl = localStorage.getItem(name);
+                if (savedDataUrl) {
+                    let img = new Image();
+                    img.src = savedDataUrl;
+                    img.onload = function () {
+                        // Display the image on the page or draw it on another canvas
+                        clear();
+                        ctx.drawImage(img, 0, 0, img.width, img.height);
+                        backupCtx.drawImage(img, 0, 0, img.width, img.height);
+                        canvasStates = [];
+                    };
+                }
+            }
+
+            function saveDrawing() {
+                var name = prompt("Name to save as");
+                if (name != null) {
+                    saveDrawingToLocalStorage(name);
+                }
+            }
+
+            function saveDrawingToLocalStorage(name) {
+                const dataUrl = canvas.toDataURL();
+                localStorage.setItem(name, dataUrl);
+                showSelectMenuAndLoadDrawing();
+            }
+
+            function showSelectMenuAndLoadDrawing() {
+                //const select = document.createElement('select');
+                const select = document.getElementById("loadSelect");
+                select.innerHTML = `<option>Load...</option>`;
+                Object.keys(localStorage).forEach((key) => {
+                    select.innerHTML += `<option value="${key}">${key}</option>`;
+                });
+
+                select.addEventListener("change", function () {
+                    if (this.value !== "Select a drawing") {
+                        loadDrawingOntoCanvas(this.value);
+                    }
+                });
+            }
+            showSelectMenuAndLoadDrawing();
+
+            function downloadShapeAsBinaryFile() {
+                let filename = "";
+                const select = document.getElementById("loadSelect");
+                if (select.value == "Load...") {
+                    filename = prompt("Save as...");
+                    if (filename == null) return;
+                } else {
+                    filename = select.value;
+                }
+
+                let uint8Array = packIntegersToUint8Array(convertCanvasToShapeData());
+                // Create a new Blob object using the Uint8Array's data
+                const blob = new Blob([uint8Array], { type: "application/octet-stream" });
+
+                // Create an object URL for the blob
+                const url = URL.createObjectURL(blob);
+
+                // Create a temporary anchor element and set its href to the blob URL
+                const a = document.createElement("a");
+                a.href = url;
+                a.download = filename; // Set the filename for the download
+
+                // Append the anchor to the document, trigger a click on it, and then remove it
+                document.body.appendChild(a); // Append to the body (or any other existing element)
+                a.click(); // Trigger the download
+
+                // Clean up by revoking the object URL and removing the anchor element
+                URL.revokeObjectURL(url);
+                document.body.removeChild(a);
+            }
+
+            function floodFill(startX, startY, fillColor) {
+                const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+                const data = imageData.data;
+                const width = imageData.width;
+                const targetColor = getColorAtPixel(data, startX, startY, width);
+                const newColor = hexToRgba(fillColor);
+
+                // Check if the target color is the same as the new color
+                if (colorsMatch(targetColor, newColor)) {
+                    return; // No need to fill
+                }
+
+                function fill(x, y) {
+                    // Check bounds
+                    if (x < 0 || y < 0 || x >= imageData.width || y >= imageData.height) {
+                        return;
+                    }
+
+                    const currentColor = getColorAtPixel(data, x, y, width);
+
+                    // If the current pixel's color is not the target color, or already the new color, return
+                    if (!colorsMatch(currentColor, targetColor) || colorsMatch(currentColor, newColor)) {
+                        return;
+                    }
+
+                    // Set the pixel to the new color
+                    setColorAtPixel(data, x, y, newColor, width);
+
+                    // Recursive calls for adjacent pixels
+                    fill(x + 1, y); // East
+                    fill(x - 1, y); // West
+                    fill(x, y + 1); // South
+                    fill(x, y - 1); // North
+                }
+
+                fill(startX, startY);
+
+                ctx.putImageData(imageData, 0, 0);
+            }
+
+            // Helper functions
+            function getColorAtPixel(data, x, y, width) {
+                const index = (y * width + x) * 4;
+                return {
+                    r: data[index],
+                    g: data[index + 1],
+                    b: data[index + 2],
+                    a: data[index + 3],
+                };
+            }
+
+            function setColorAtPixel(data, x, y, color, width) {
+                const index = (y * width + x) * 4;
+                data[index] = color.r;
+                data[index + 1] = color.g;
+                data[index + 2] = color.b;
+                data[index + 3] = color.a;
+            }
+
+            function hexToRgba(hex) {
+                var r = 0,
+                    g = 0,
+                    b = 0,
+                    a = 255; // Default is opaque black
+                if (hex.length == 7) {
+                    r = parseInt(hex.slice(1, 3), 16);
+                    g = parseInt(hex.slice(3, 5), 16);
+                    b = parseInt(hex.slice(5, 7), 16);
+                }
+                return { r, g, b, a };
+            }
+
+            function colorsMatch(c1, c2) {
+                return c1.r === c2.r && c1.g === c2.g && c1.b === c2.b && c1.a === c2.a;
+            }
+
             document.getElementById("pencilBtn").addEventListener("click", () => (tool = "pencil"));
             document.getElementById("lineBtn").addEventListener("click", () => (tool = "line"));
             document.getElementById("rectBtn").addEventListener("click", () => (tool = "rect"));
             document.getElementById("ovalBtn").addEventListener("click", () => (tool = "oval"));
+            document.getElementById("fill").addEventListener("click", () => (tool = "fill"));
             document.getElementById("zoomInBtn").addEventListener("click", zoomIn);
             document.getElementById("zoomOutBtn").addEventListener("click", zoomOut);
             document.getElementById("convertBtn").addEventListener("click", convertCanvasToString);
@@ -465,6 +759,14 @@
             canvas.addEventListener("mousemove", draw);
             canvas.addEventListener("mouseup", endDrawing);
             canvas.addEventListener("mouseout", endDrawing);
+
+            document.addEventListener("keydown", function (event) {
+                // Check for Z key with Command (metaKey) or Ctrl key
+                if (event.key === "z" && (event.ctrlKey || event.metaKey)) {
+                    event.preventDefault(); // Prevent the default undo functionality
+                    undoCanvasState(); // Call undo
+                }
+            });
         </script>
     </body>
 </html>
