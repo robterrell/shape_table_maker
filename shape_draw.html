@@ -67,10 +67,11 @@
         <div style="position: absolute; top: 20px; left: 82px">
             <div style="display: grid">
                 <canvas id="drawingCanvas" width="16" height="16" scale="1.0"></canvas>
-                <img <div />
+                <div />
                 <button id="convertBtn">Convert to String</button>
                 <button id="makeShape">Convert to Shape</button>
                 <button id="describeShape" onclick="describeShape()">Describe Shape</button>
+                <button id="hexShape" onclick="hexDataForShape()">Hex Data for Shape</button>
                 <button id="convertBasic" onclick="createBasic()">BASIC data</button>
                 <button id="downloadShape" onclick="downloadShapeAsBinaryFile()">Download Shape</button><br />
                 <button id="resize8" onclick="resizeCanvas(8);">8 x 8</button>
@@ -80,7 +81,9 @@
                 <button id="resize48" onclick="resizeCanvas(48);">48 x 48</button>
                 <button id="resize64" onclick="resizeCanvas(64);">64 x 64</button>
             </div>
-            <pre id="output"></pre>
+        </div>
+        <div style="position: relative">
+            <pre id="output" style="width: 600px"></pre>
         </div>
 
         <script>
@@ -132,6 +135,7 @@
                 backupCanvas.width = w;
                 backupCanvas.height = h;
                 updateCanvasScale();
+                clear();
             }
 
             function startDrawing(e) {
@@ -338,16 +342,14 @@
             }
 
             function convertCanvasToShapeData() {
-                const move_right = 0b001;
-                const move_left = 0b011;
                 const move_up = 0b000;
+                const move_right = 0b001;
                 const move_down = 0b010;
+                const move_left = 0b011;
                 const plot_up = 0b100;
-                const plot_down = 0b110;
                 const plot_right = 0b101;
+                const plot_down = 0b110;
                 const plot_left = 0b111;
-
-                //                outputCtx.drawImage(canvas, 0, 0, canvas.width, canvas.height, 0, 0, outputCanvas.width, outputCanvas.height);
 
                 const imageData = ctx.getImageData(0, 0, outputCanvas.width, outputCanvas.height);
                 const pixels = imageData.data;
@@ -374,22 +376,20 @@
                         y = y + 1;
                         continue;
                     }
+                    if (y >= height) break;
 
                     for (let x = 0; x < width; x++) {
                         const index = (y * width + x) * 4; // Calculate index within the image data array
                         const r = pixels[index]; // red value of the pixel
+                        const endOfRow = x == width - 1;
                         if (r == 0) {
-                            // plot right
-                            if (x == width - 1) {
-                                commands.push(plot_right);
+                            if (endOfRow) {
                                 commands.push(plot_down);
                             } else {
                                 commands.push(plot_right);
                             }
                         } else {
-                            // move right
-                            if (x == width - 1) {
-                                commands.push(move_right);
+                            if (endOfRow) {
                                 commands.push(move_down);
                             } else {
                                 commands.push(move_right);
@@ -397,25 +397,23 @@
                         }
                         console.log(x, y, r, intToVectorName(commands[commands.length - 1]));
                     }
-                    //commands.push(move_left);
-                    //commands.push(move_down);
 
                     y = y + 1;
+                    if (y >= height) break;
+
                     // next row, from right to left
                     for (let x = width - 1; x >= 0; x--) {
                         const index = (y * width + x) * 4; // Calculate index within the image data array
                         const r = pixels[index]; // red value of the pixel
+                        const startOfRow = x == 0;
                         if (r == 0) {
-                            // plot left, or down if we're at the left edge
-                            if (x == 0) {
-                                commands.push(plot_left);
+                            if (startOfRow) {
                                 commands.push(plot_down);
                             } else {
                                 commands.push(plot_left);
                             }
                         } else {
-                            if (x == 0) {
-                                commands.push(move_left);
+                            if (startOfRow) {
                                 commands.push(move_down);
                             } else {
                                 commands.push(move_left);
@@ -423,12 +421,10 @@
                         }
                         console.log(x, y, r, intToVectorName(commands[commands.length - 1]));
                     }
-                    //commands.push(move_right);
-                    //commands.push(move_down);
                     y = y + 1;
                 }
                 commands.push(0);
-                var out = chunk(commands, width);
+                var out = chunk(commands, width + 2);
                 document.getElementById("output").textContent = out.join("\n");
                 return commands;
             }
@@ -472,29 +468,26 @@
 
                 integers.forEach((value, index) => {
                     // Calculate which byte this value should go into
-                    const byteIndex = Math.floor(index / 2);
+                    const byteIndex = 4 + Math.floor(index / 2);
 
-                    // Ensure the value is within the expected range
                     if (value === 0) {
-                        packedArray[byteIndex + 4] = 0;
+                        packedArray[byteIndex] = 0;
                         return;
                     }
 
+                    // Ensure the value is within the expected range
                     if (value < 1 || value > 7) {
                         throw new RangeError("Integer values must be in the range of 1-7.");
                     }
 
-                    // Calculate which byte this value should go into
-                    //const byteIndex = Math.floor(index / 2);
-
                     if (index % 2 === 0) {
                         // If it's an even index (or the first of a pair),
-                        // shift the value left by 3 bits and add it to the byte.
-                        packedArray[byteIndex + 4] = value << 3;
+                        // add the value to the byte without shifting (occupies the lowest 3 bits).
+                        packedArray[byteIndex] = value;
                     } else {
                         // If it's an odd index (or the second of a pair),
-                        // add the value to the byte without shifting (occupies the lowest 3 bits).
-                        packedArray[byteIndex + 4] |= value;
+                        // shift the value left by 3 bits and add it to the byte.
+                        packedArray[byteIndex] |= value << 3;
                     }
                 });
 
@@ -527,6 +520,7 @@
                         result += "\n" + ++lineNum + " DATA ";
                     }
                 });
+                result += "\n" + ++lineNum + " DATA -1";
                 document.getElementById("output").textContent = result;
                 return result;
             }
@@ -568,6 +562,34 @@
                 for (index in commands) {
                     let command = commands[index];
                     result += intToVectorName(command) + "\n";
+                }
+                document.getElementById("output").textContent = result;
+                return result;
+            }
+
+            function hexDataForShape() {
+                let commands = convertCanvasToShapeData();
+                let result = "";
+                for (index in commands) {
+                    let command = commands[index];
+                    result += command.toString(16).padStart(2, "0") + " ";
+                }
+
+                document.getElementById("output").textContent = result;
+                return result;
+            }
+
+            function annotateShape() {
+                let commands = convertCanvasToShapeData();
+                let result = "";
+                let temp = "";
+                let i = 0;
+                for (index in commands) {
+                    let command = commands[index];
+                    if (command == 2) {
+                        i++;
+                    }
+                    result += i++ + intToVectorName(command) + "\n";
                 }
                 document.getElementById("output").textContent = result;
                 return result;
@@ -631,12 +653,43 @@
                 });
 
                 select.addEventListener("change", function () {
-                    if (this.value !== "Select a drawing") {
+                    if (this.value !== "Load...") {
                         loadDrawingOntoCanvas(this.value);
                     }
                 });
             }
             showSelectMenuAndLoadDrawing();
+
+            function downloadShapeAsTextFile() {
+                let filename = "";
+                const select = document.getElementById("loadSelect");
+                if (select.value == "Load...") {
+                    filename = prompt("Save as...");
+                    if (filename == null) return;
+                } else {
+                    filename = select.value;
+                }
+                filename += ".txt";
+
+                const dataUrl = canvas.toDataURL();
+                const blob = new Blob([dataUrl], { type: "text/plain" });
+
+                // Create an object URL for the blob
+                const url = URL.createObjectURL(blob);
+
+                // Create a temporary anchor element and set its href to the blob URL
+                const a = document.createElement("a");
+                a.href = url;
+                a.download = filename; // Set the filename for the download
+
+                // Append the anchor to the document, trigger a click on it, and then remove it
+                document.body.appendChild(a); // Append to the body (or any other existing element)
+                a.click(); // Trigger the download
+
+                // Clean up by revoking the object URL and removing the anchor element
+                URL.revokeObjectURL(url);
+                document.body.removeChild(a);
+            }
 
             function downloadShapeAsBinaryFile() {
                 let filename = "";
@@ -646,9 +699,12 @@
                     if (filename == null) return;
                 } else {
                     filename = select.value;
+                    select.value = 0;
                 }
+                filename += ".bin";
 
-                let uint8Array = packIntegersToUint8Array(convertCanvasToShapeData());
+                let data = convertCanvasToShapeData();
+                let uint8Array = packIntegersToUint8Array(new Uint8Array(data));
                 // Create a new Blob object using the Uint8Array's data
                 const blob = new Blob([uint8Array], { type: "application/octet-stream" });
 
@@ -767,6 +823,23 @@
                     undoCanvasState(); // Call undo
                 }
             });
+
+            function extractCommandsFromUint8Array(inputArray) {
+                const commands = [];
+                for (let i = 0; i < inputArray.length; i++) {
+                    const byte = inputArray[i];
+                    // Extract the first command (lower 3 bits)
+                    const command1 = byte & 0b111; // 0b111 is 7 in binary, masking the lower 3 bits
+                    commands.push(command1);
+                    // Extract the second command (next 3 bits)
+                    const command2 = (byte >> 3) & 0b111; // Shift right by 3 bits, then mask
+                    commands.push(command2);
+                    // Extract the third command (next 2 bits)
+                    const command3 = (byte >> 6) & 0b11; // Shift right by 3 bits, then mask
+                    commands.push(command3);
+                }
+                return commands;
+            }
         </script>
     </body>
 </html>
