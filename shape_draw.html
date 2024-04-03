@@ -1,9 +1,13 @@
 <!DOCTYPE html>
+<!-- Apple //e Shape Table Maker -->
+<!-- By Rob Terrell -->
+<!-- Copyright 2004 Rob Terrell -->
+<!-- https://github.com/robterrell/shape_table_maker -->
 <html lang="en">
     <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>Canvas Drawing</title>
+        <title>Shape Table Editor</title>
         <style>
             #drawingCanvas {
                 border: 1px solid #000;
@@ -13,77 +17,107 @@
         </style>
     </head>
     <body>
-        <div style="position: absolute; top: 0px; right: 10px">
-            <button id="saveDrawing" onclick="saveDrawing()">Save as...</button>
-            <select id="loadSelect"></select>
-        </div>
-        <div style="display: grid; left: 0px; top: 20px">
-            <button id="pencilBtn" style="left: 0px; width: 60px; height: 40px">
-                <img
-                    src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABwAAAAUCAQAAAA0V5VyAAAA8ElEQVR42tXRvyuEAQCA4Ud3yqEjhYRuonQp6brBZLNYnMGPpIy3G4jdTXfZTDJYhLvFIIa7wqSEC/f9N8ZL99113+jdn+n1DxqTExO5SVWBfRFLGnQlsO5PMUlx7ZtSlTdgFYBZh+58C9SdSghnNYGGNEDKmR8Xdi0YN+PejtamVQUC2wCcKEoBGFK1EcJqTRZW1qOyvlDWaMcmFDUU9EdhcXnvri0ShY268SKnpy3bCp/64Nww0RjHbvVGZzxbEValM+NTVmsZga9OjEsHaJYwjzV7RnQs40PBsrSsTSVvKnp01ZySJ3Wvyo4sdcd+AVHMR3iVEvg+AAAAAElFTkSuQmCC"
-                    alt="Pencil"
-                    border="0"
-                />
-            </button>
-            <button id="lineBtn" style="left: 0px; width: 60px; height: 40px">
-                <img
-                    src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA8AAAAPCAQAAACR313BAAAAJUlEQVR42mPAA7wZ0nBL+jNcBSrAAfyAkv7DQ9J/oCUxwRZ8kgBRfRSBbVWEfAAAAABJRU5ErkJggg=="
-                    alt="Line"
-                    border="0"
-                />
-            </button>
-            <button id="rectBtn" style="left: 0px; width: 60px; height: 40px">
-                <img
-                    src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAARCAQAAAB6UzRyAAAAH0lEQVR42mNg+E8EJF4RHkCCopujiqiuiPJooVpSAQC7OnoJqmh4RQAAAABJRU5ErkJggg=="
-                    alt="Rectangle"
-                    border="0"
-                />
-            </button>
-            <button id="ovalBtn" style="left: 0px; width: 60px; height: 40px">
-                <img
-                    src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABoAAAATCAQAAAAkTNWNAAABIklEQVR42p3NvyvmcQDA8ddzT3fndIOLG+4Ww12ZDAYDGSSFgTIoipHCoKSUQSZSiixIj/woKeqZRIpHPI/ioUxf389/YzDoSQ/fvMb38lYipdGodcfyHt04tW1Sm2/KqDDiXBAU7Fg1b1nGS7k1o9obTc4FWUP+KFWl25ZYUZ8SPSJXupTXICuYAqBVLKvG+75bFYwClfLyfvlY2oHIPxgUdEqmVmwedhWkJbWlKMWdFckNC/4SmZNcn6Duk6c9eWlJZRSlGBJ0SKbWkwWoVHCtysfS9kX+A21iR6q976tlwTgAvSI57cqrdySYluJVi5zgUL8apX7qtCH2YMAbP4y5FAQ5m5bMWbTmRCwomvVbGV80m5Bx5lbk3oV90zpUAADPDvpXd0migyQAAAAASUVORK5CYII="
-                    alt="Oval"
-                    border="0"
-                />
-            </button>
-            <button id="zoomInBtn" style="left: 0px; width: 60px; height: 40px">
-                <img
-                    src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABMAAAATCAQAAADYWf5HAAABAklEQVR42o3OL0tDURjA4UfuQC4mRQzqndEgFpNRwa7gn2wzmCxqsWiw6NSZTYaxDzDYil4HS2NomIPzbTTIPbAx5hNOOb+X91XYUdXW1/FiX4lRC2r6Kg5s2XWtp2V1NPpQl4lmVX1Zg6imbhpEU+7kUuJNfRmAIyVAquNEoaoi6lsBcKqh0HY4JtsQzMSPbXBkYCD4fV2CsqAM0LEHEpnMt02ZFKwLZgFe3IxZeixX2NeLMy6kgETTuUJJy7Mpw850zROt+nQvFSXOBK8SiNbkOk5tKFt3rKkrFzwNh6kTDUEQ5M7NW/QmeJQYMSMzB/AXPkhMsORdUPlveGWiZS23Pzo1RYNSBLaAAAAAAElFTkSuQmCC"
-                />
-            </button>
-            <button id="zoomOutBtn" style="left: 0px; width: 60px; height: 40px">
-                <img
-                    src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABMAAAATCAQAAADYWf5HAAAA7UlEQVR42o3KsUpCYQBA4S+uEJcmIxoqXRvCxScocC+woNHNwclFWlpqaCkrm50axAcQdKmb4CRSgwT3bWqIH/QK9p31CCo6xuYmuqpyZO3qmWs7d+zUjZmRw+z0oa9AkNfx5ciCnr5NizbcS8SCirmCrNhEXdDRtlrDQDB2YbWy1BbA3Am49B26AkWpIsDEGcgphGJQksoDdN1arSYRVM3kZUWGWoKckRcbljVN7SA49OlBTBBpSr2KLDiSmGgoKyqpGZpKpJ6Xx1jdQOo3iZYde96knkQythRsA/yNjyJr7HuXav93vLbWgZG7H0qYQP0ocnGnAAAAAElFTkSuQmCC"
-                />
-            </button>
-            <button id="clear" style="left: 0px; width: 60px; height: 40px">
-                <img
-                    src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABMAAAAXCAQAAABDyLxRAAABF0lEQVR42pXQvyvEcRzH8QfuB9+vlD9AdoWSDBaTTAbFZOEPUAwWpSyKsikuZToZZZDhRsVydWXBlc1foO6uvieldN0nn27xfC3v4dXr9X6/CcyrevPyq7obI3pyZd8AYETFup7cWxY4t0Vg2UZHj05sdHXnsjtPcuhCXVmppyqelKxAn1cTerPrFICaWYwax4ApMA0OHEE/aEqxYBNjjsGZIaRasa2tKFDURqoJOcGWKQjkfCPRDGmtjq0oJhFKNSRRacEX3dJot1BalIFEI7JFaW2ILx1GFqfFl7bEaXkZ8nLi3YS08DV/S5PIVpAhQZzm0w4+7OHdEVI0AZhTkyJmSZVA3q0H5UjXnm1DYNCitUirZvyPHz0/YaPoSZd8AAAAAElFTkSuQmCC"
-                />
-            </button>
-            <button id="fill" style="left: 0px; width: 60px; height: 40px">Fill</button>
-        </div>
+        <div>
+            <p>Bitmap editor for Apple ][+, //e, //c Shape Tables</p>
+            <p>Hint: use Command-Z for undo.</p>
+            <div>
+                <div style="position: absolute; top: 0px; right: 10px">
+                    <button id="saveDrawing" onclick="saveDrawing()">Save as...</button>
+                    <select id="loadSelect"></select>
+                    <br />
+                    <button id="downloadShape" style="width: 120px" onclick="downloadShapeAsBinaryFile()">
+                        Download Shape</button
+                    ><br />
+                    <button id="downloadPng" style="width: 120px" onclick="downloadShapeAsPNG()">Download PNG</button
+                    ><br />
+                    <button id="openBuildPopover" style="width: 120px" popovertarget="builder">
+                        Shape Table Builder
+                    </button>
+                </div>
+                <div style="position: absolute; display: grid; left: 0px; top: 80px">
+                    <button id="pencilBtn" style="left: 0px; width: 60px; height: 40px">
+                        <img
+                            src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABwAAAAUCAQAAAA0V5VyAAAA8ElEQVR42tXRvyuEAQCA4Ud3yqEjhYRuonQp6brBZLNYnMGPpIy3G4jdTXfZTDJYhLvFIIa7wqSEC/f9N8ZL99113+jdn+n1DxqTExO5SVWBfRFLGnQlsO5PMUlx7ZtSlTdgFYBZh+58C9SdSghnNYGGNEDKmR8Xdi0YN+PejtamVQUC2wCcKEoBGFK1EcJqTRZW1qOyvlDWaMcmFDUU9EdhcXnvri0ShY268SKnpy3bCp/64Nww0RjHbvVGZzxbEValM+NTVmsZga9OjEsHaJYwjzV7RnQs40PBsrSsTSVvKnp01ZySJ3Wvyo4sdcd+AVHMR3iVEvg+AAAAAElFTkSuQmCC"
+                            alt="Pencil"
+                            border="0"
+                        />
+                    </button>
+                    <button id="lineBtn" style="left: 0px; width: 60px; height: 40px">
+                        <img
+                            src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA8AAAAPCAQAAACR313BAAAAJUlEQVR42mPAA7wZ0nBL+jNcBSrAAfyAkv7DQ9J/oCUxwRZ8kgBRfRSBbVWEfAAAAABJRU5ErkJggg=="
+                            alt="Line"
+                            border="0"
+                        />
+                    </button>
+                    <button id="rectBtn" style="left: 0px; width: 60px; height: 40px">
+                        <img
+                            src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAARCAQAAAB6UzRyAAAAH0lEQVR42mNg+E8EJF4RHkCCopujiqiuiPJooVpSAQC7OnoJqmh4RQAAAABJRU5ErkJggg=="
+                            alt="Rectangle"
+                            border="0"
+                        />
+                    </button>
+                    <button id="ovalBtn" style="left: 0px; width: 60px; height: 40px">
+                        <img
+                            src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABoAAAATCAQAAAAkTNWNAAABIklEQVR42p3NvyvmcQDA8ddzT3fndIOLG+4Ww12ZDAYDGSSFgTIoipHCoKSUQSZSiixIj/woKeqZRIpHPI/ioUxf389/YzDoSQ/fvMb38lYipdGodcfyHt04tW1Sm2/KqDDiXBAU7Fg1b1nGS7k1o9obTc4FWUP+KFWl25ZYUZ8SPSJXupTXICuYAqBVLKvG+75bFYwClfLyfvlY2oHIPxgUdEqmVmwedhWkJbWlKMWdFckNC/4SmZNcn6Duk6c9eWlJZRSlGBJ0SKbWkwWoVHCtysfS9kX+A21iR6q976tlwTgAvSI57cqrdySYluJVi5zgUL8apX7qtCH2YMAbP4y5FAQ5m5bMWbTmRCwomvVbGV80m5Bx5lbk3oV90zpUAADPDvpXd0migyQAAAAASUVORK5CYII="
+                            alt="Oval"
+                            border="0"
+                        />
+                    </button>
+                    <button id="zoomInBtn" style="left: 0px; width: 60px; height: 40px">
+                        <img
+                            src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABMAAAATCAQAAADYWf5HAAABAklEQVR42o3OL0tDURjA4UfuQC4mRQzqndEgFpNRwa7gn2wzmCxqsWiw6NSZTYaxDzDYil4HS2NomIPzbTTIPbAx5hNOOb+X91XYUdXW1/FiX4lRC2r6Kg5s2XWtp2V1NPpQl4lmVX1Zg6imbhpEU+7kUuJNfRmAIyVAquNEoaoi6lsBcKqh0HY4JtsQzMSPbXBkYCD4fV2CsqAM0LEHEpnMt02ZFKwLZgFe3IxZeixX2NeLMy6kgETTuUJJy7Mpw850zROt+nQvFSXOBK8SiNbkOk5tKFt3rKkrFzwNh6kTDUEQ5M7NW/QmeJQYMSMzB/AXPkhMsORdUPlveGWiZS23Pzo1RYNSBLaAAAAAAElFTkSuQmCC"
+                        />
+                    </button>
+                    <button id="zoomOutBtn" style="left: 0px; width: 60px; height: 40px">
+                        <img
+                            src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABMAAAATCAQAAADYWf5HAAAA7UlEQVR42o3KsUpCYQBA4S+uEJcmIxoqXRvCxScocC+woNHNwclFWlpqaCkrm50axAcQdKmb4CRSgwT3bWqIH/QK9p31CCo6xuYmuqpyZO3qmWs7d+zUjZmRw+z0oa9AkNfx5ciCnr5NizbcS8SCirmCrNhEXdDRtlrDQDB2YbWy1BbA3Am49B26AkWpIsDEGcgphGJQksoDdN1arSYRVM3kZUWGWoKckRcbljVN7SA49OlBTBBpSr2KLDiSmGgoKyqpGZpKpJ6Xx1jdQOo3iZYde96knkQythRsA/yNjyJr7HuXav93vLbWgZG7H0qYQP0ocnGnAAAAAElFTkSuQmCC"
+                        />
+                    </button>
+                    <button id="clear" style="left: 0px; width: 60px; height: 40px">
+                        <img
+                            src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABMAAAAXCAQAAABDyLxRAAABF0lEQVR42pXQvyvEcRzH8QfuB9+vlD9AdoWSDBaTTAbFZOEPUAwWpSyKsikuZToZZZDhRsVydWXBlc1foO6uvieldN0nn27xfC3v4dXr9X6/CcyrevPyq7obI3pyZd8AYETFup7cWxY4t0Vg2UZHj05sdHXnsjtPcuhCXVmppyqelKxAn1cTerPrFICaWYwax4ApMA0OHEE/aEqxYBNjjsGZIaRasa2tKFDURqoJOcGWKQjkfCPRDGmtjq0oJhFKNSRRacEX3dJot1BalIFEI7JFaW2ILx1GFqfFl7bEaXkZ8nLi3YS08DV/S5PIVpAhQZzm0w4+7OHdEVI0AZhTkyJmSZVA3q0H5UjXnm1DYNCitUirZvyPHz0/YaPoSZd8AAAAAElFTkSuQmCC"
+                        />
+                    </button>
+                    <button id="fill" style="left: 0px; width: 60px; height: 40px">Fill</button>
+                </div>
 
-        <div style="position: absolute; top: 20px; left: 82px">
-            <div style="display: grid">
-                <canvas id="drawingCanvas" width="16" height="16" scale="1.0"></canvas>
-                <div />
-                <button id="convertBtn">Convert to String</button>
-                <button id="makeShape">Convert to Shape</button>
-                <button id="describeShape" onclick="describeShape()">Describe Shape</button>
-                <button id="hexShape" onclick="hexDataForShape()">Hex Data for Shape</button>
-                <button id="convertBasic" onclick="createBasic()">BASIC data</button>
-                <button id="downloadShape" onclick="downloadShapeAsBinaryFile()">Download Shape</button><br />
-                <button id="resize8" onclick="resizeCanvas(8);">8 x 8</button>
-                <button id="resize16" onclick="resizeCanvas(16);">16 x 16</button>
-                <button id="resize24" onclick="resizeCanvas(24);">24 x 24</button>
-                <button id="resize32" onclick="resizeCanvas(32);">32 x 32</button>
-                <button id="resize48" onclick="resizeCanvas(48);">48 x 48</button>
-                <button id="resize64" onclick="resizeCanvas(64);">64 x 64</button>
+                <div style="position: absolute; top: 80px; left: 82px">
+                    <div style="display: grid">
+                        <div class="stack" style="position: relative">
+                            <canvas id="drawingCanvas" width="16" height="16" scale="1.0"></canvas>
+                            <div
+                                id="dragHandle"
+                                style="
+                                    width: 20px;
+                                    height: 20px;
+                                    position: absolute;
+                                    bottom: -10px;
+                                    right: -20px;
+                                    cursor: nwse-resize;
+                                "
+                            >
+                                ⇲
+                            </div>
+                            <div style="position: relative; right: -60px">
+                                <span id="sizeText" style="font-size: 9pt; float: right"></span>
+                            </div>
+                        </div>
+                        <!--button id="convertBtn" onclick="convertCanvasToString()">Convert to String</button-->
+                        <!--button id="makeShape" onclick="convertCanvasToShapeData">Convert to Shape</button-->
+                        <!--button id="describeShape" onclick="describeShape()">Describe Shape</button-->
+                        <button id="hexShape" style="width: 120px" onclick="hexDataForShape()">Hex Data</button>
+                        <button id="convertBasic" style="width: 120px" onclick="createBasic()">BASIC data</button>
+                    </div>
+                    <div style="position: absolute">
+                        <pre id="output" style="width: 600px"></pre>
+                    </div>
+                </div>
             </div>
-        </div>
-        <div style="position: relative">
-            <pre id="output" style="width: 600px"></pre>
+            <dialog popover id="builder" style="position: absolute; left: 60px; top: 40px">
+                <select id="buildSelect" multiple style="height: 200px"></select>
+                <button id="build" onclick="buildTable()">Build Table</button>
+                <button popovertarget="builder" popovertargetaction="hide">Close</button>
+            </dialog>
         </div>
 
         <script>
@@ -112,11 +146,17 @@
             backupCanvas.height = canvas.height;
             backupCtx.imageSmoothingEnabled = false;
 
+            // smaller-sized output canvas, to eliminate aliasing
             let outputCanvas = document.createElement("canvas");
             let outputCtx = backupCanvas.getContext("2d");
             outputCtx.imageSmoothingEnabled = false;
-            outputCanvas.height = canvas.height;
             outputCanvas.width = canvas.width;
+            outputCanvas.height = canvas.height;
+
+            // let overlayCanvas = document.createElement("canvas");
+            // let overlayCtx = overlayCanvas.getContext("2d");
+            // overlayCanvas.width = canvas.width * 32;
+            // overlayCanvas.height = canvas.height * 32;
 
             clear();
             zoomIn();
@@ -128,15 +168,48 @@
                 if (h == null) {
                     h = w;
                 }
+                // save the current drawing, to blit after the resize
+                backupCtx.drawImage(canvas, 0, 0);
+
                 canvas.width = w;
                 canvas.height = h;
                 outputCanvas.width = w;
                 outputCanvas.height = h;
+
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                ctx.fillStyle = "rgba(255,255,255,255)";
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+                // blit the backup back onto the drawing canvas
+                ctx.drawImage(backupCanvas, 0, 0);
+
                 backupCanvas.width = w;
                 backupCanvas.height = h;
+
+                backupCtx.clearRect(0, 0, canvas.width, canvas.height);
+                backupCtx.fillStyle = "rgba(255,255,255,255)";
+                backupCtx.fillRect(0, 0, canvas.width, canvas.height);
+
                 updateCanvasScale();
-                clear();
             }
+
+            // function drawGrid() {
+            //     overlayCanvas.style.width = canvas.width;
+            //     overlayCanvas.style.height = canvas.height;
+            //     overlayCtx.fillStyle = "rgba(255,255,255,255)";
+            //     overlayCtx.fillRect(0, 0, overlayCanvas.width, overlayCanvas.height);
+            //     overlayCtx.strokeStyle = "rgba(0,0,0,0)";
+            //     console.log("scale", scale);
+            //     for (var x = 0; x < overlayCanvas.width; x += scale) {
+            //         overlayCtx.moveTo(x, 0);
+            //         overlayCtx.lineTo(x, overlayCanvas.height);
+            //         overlayCtx.moveTo(0, x);
+            //         overlayCtx.lineTo(x, overlayCanvas.width);
+            //     }
+            // plot the origin
+            //ctx.fillStyle = "rgb(255,0,0)";
+            //ctx.fillRect(originX, originY, 1, 1);
+            // }
 
             function startDrawing(e) {
                 const [x, y] = adjustCoordinates(e);
@@ -178,7 +251,20 @@
                     case "oval":
                         redrawCanvas();
                         if (tool === "line") {
-                            drawLineBresenham(ctx, startX, startY, x, y);
+                            let endX = x,
+                                endY = y;
+                            if (e.shiftKey) {
+                                const deltaX = Math.abs(endX - startX);
+                                const deltaY = Math.abs(endY - startY);
+
+                                // Constrain to horizontal or vertical based on which direction has the greatest distance
+                                if (deltaX > deltaY) {
+                                    endY = startY; // Make horizontal by fixing the Y-coordinate
+                                } else {
+                                    endX = startX; // Make vertical by fixing the X-coordinate
+                                }
+                            }
+                            drawLineBresenham(ctx, startX, startY, endX, endY);
                         } else if (tool === "rect") {
                             drawLineBresenham(ctx, startX, startY, startX, y);
                             drawLineBresenham(ctx, startX, y, x, y);
@@ -225,9 +311,6 @@
                     backupCtx.clearRect(0, 0, backupCanvas.width, backupCanvas.height);
                     backupCtx.drawImage(canvas, 0, 0);
                 }
-                // plot the origin
-                //ctx.fillStyle = "rgb(255,0,0)";
-                //ctx.fillRect(originX, originY, 1, 1);
                 isDrawing = false;
             }
 
@@ -272,6 +355,16 @@
                 scaledHeight = canvas.height * scale;
                 canvas.style.width = `${scaledWidth}px`;
                 canvas.style.height = `${scaledHeight}px`;
+                // overlayCanvas.style.width = "${scaledWidth}px";
+                // overlayCanvas.style.height = "${scaledHeight}px";
+                /*                     <canvas
+                   id="overlayCanvas"
+                   width="16"
+                   height="16"
+                   scale="2.0"
+                   style="position: absolute; left: 0; top: 0; z-index: 99"
+               ></canvas>
+               */
             }
 
             function clear() {
@@ -341,7 +434,7 @@
                 return resultString;
             }
 
-            function convertCanvasToShapeData() {
+            function convertCanvasToShapeData(context) {
                 const move_up = 0b000;
                 const move_right = 0b001;
                 const move_down = 0b010;
@@ -351,14 +444,24 @@
                 const plot_down = 0b110;
                 const plot_left = 0b111;
 
-                const imageData = ctx.getImageData(0, 0, outputCanvas.width, outputCanvas.height);
+                if (context == null) {
+                    context = ctx;
+                }
+
+                console.log(
+                    "context.canvas.width:",
+                    context.canvas.width,
+                    "context.canvas.context.canvas.height",
+                    context.canvas.height
+                );
+                const imageData = context.getImageData(0, 0, context.canvas.width, context.canvas.height);
                 const pixels = imageData.data;
                 const width = imageData.width;
                 const height = imageData.height;
                 let resultString = "";
 
+                console.log("convertCanvasToShapeData: ", width, height);
                 let commands = [];
-                // TODO: error in the next line if the canvas isn't an even number of rows
                 let y = 0;
                 while (y < height) {
                     //if entire row is empty, skip
@@ -371,7 +474,7 @@
                         }
                     }
                     if (rowIsEmpty) {
-                        console.log("row " + y + " is empty");
+                        //console.log("row " + y + " is empty");
                         commands.push(move_down);
                         y = y + 1;
                         continue;
@@ -395,7 +498,7 @@
                                 commands.push(move_right);
                             }
                         }
-                        console.log(x, y, r, intToVectorName(commands[commands.length - 1]));
+                        //console.log(x, y, r, intToVectorName(commands[commands.length - 1]));
                     }
 
                     y = y + 1;
@@ -419,7 +522,7 @@
                                 commands.push(move_left);
                             }
                         }
-                        console.log(x, y, r, intToVectorName(commands[commands.length - 1]));
+                        //console.log(x, y, r, intToVectorName(commands[commands.length - 1]));
                     }
                     y = y + 1;
                 }
@@ -432,43 +535,155 @@
             const chunk = (arr, size) =>
                 Array.from({ length: Math.ceil(arr.length / size) }, (v, i) => arr.slice(i * size, i * size + size));
 
-            function packCommands(commands) {
-                // take an array of commands (ints 0-7) and pack them into the top and bottom of a byte
-                // first three bits = first command, second three bits = second command
-                // two high bits = left both zero
-                var bytes = new Uint8Array(canvas.width * canvas.height + 6);
-                bytes[0] = 1; // number of shapes
-                bytes[1] = 0; // unused
-                bytes[2] = 4; // offset to shape 1 (low order byte)
-                bytes[3] = 0; // offset to shape 1 (high oder byte)
-                // index 4 is the start of the shape data
-                var index = 4;
-                for (var i = 0; i < commands.length; i += 2) {
-                    var c1 = commands[i];
-                    // TODO: handle case where this gives an error
-                    var c2 = commands[i + 1];
-                    bytes[4 + i] = (c2 << 3) | c1;
-                    console.log(c2, c1, bytes[4 + i]);
-                }
-                console.log(bytes);
-                return bytes;
+            // function packCommands(commands) {
+            //     // take an array of commands (ints 0-7) and pack them into the top and bottom of a byte
+            //     // first three bits = first command, second three bits = second command
+            //     // two high bits = left both zero
+            //     var bytes = new Uint8Array(width * height + 6);
+            //     bytes[0] = 1; // number of shapes
+            //     bytes[1] = 0; // unused
+            //     bytes[2] = 4; // offset to shape 1 (low order byte)
+            //     bytes[3] = 0; // offset to shape 1 (high oder byte)
+            //     // index 4 is the start of the shape data
+            //     var index = 4;
+            //     for (var i = 0; i < commands.length; i += 2) {
+            //         var c1 = commands[i];
+            //         // TODO: handle case where this gives an error
+            //         var c2 = commands[i + 1];
+            //         bytes[4 + i] = (c2 << 3) | c1;
+            //         console.log(c2, c1, bytes[4 + i]);
+            //     }
+            //     console.log(bytes);
+            //     return bytes;
+            // }
+
+            function loadImageAsync(imageUrl) {
+                return new Promise((resolve, reject) => {
+                    const img = new Image();
+                    img.onload = () => resolve(img);
+                    img.onerror = (error) => reject(error);
+                    img.src = imageUrl;
+                });
             }
 
-            function packIntegersToUint8Array(integers) {
-                // Calculate the size of the resulting Uint8Array
+            async function buildTable() {
+                let options = document.getElementById("buildSelect").options;
+                let shapes = [];
+                for (i in options) {
+                    let o = options[i];
+                    if (o.selected) {
+                        let name = o.value;
+                        let savedDataUrl = localStorage.getItem(name);
+                        if (savedDataUrl == null) continue;
+                        //let img = new Image();
+                        //img.src = savedDataUrl;
+                        let img = await loadImageAsync(savedDataUrl);
+                        let width = img.width;
+                        let height = img.height;
+
+                        // outputCanvas.width = width;
+                        // outputCanvas.height = height;
+                        // outputCtx.clearRect(0, 0, width, height);
+                        // outputCtx.drawImage(img, 0, 0, width, height);
+                        // for some reason outputCtx is sometimes the wrong size -- maybe a side effet
+                        // of using async? so we'll make a new one for each
+
+                        let _canvas = document.createElement("canvas");
+                        _canvas.width = width;
+                        _canvas.height = height;
+                        let _ctx = _canvas.getContext("2d");
+                        _ctx.clearRect(0, 0, width, height);
+                        _ctx.drawImage(img, 0, 0, width, height);
+
+                        let shape = packIntegersToUint8Array(new Uint8Array(convertCanvasToShapeData(_ctx)), false);
+                        shapes.push(shape);
+                        // TODO: are we leaking the canvas?
+                    }
+                }
+                let data = assembleTableFromShapes(shapes);
+
+                // Create a new Blob object using the Uint8Array's data
+                const blob = new Blob([data], { type: "application/octet-stream" });
+
+                // Create an object URL for the blob
+                const url = URL.createObjectURL(blob);
+
+                // Create a temporary anchor element and set its href to the blob URL
+                const a = document.createElement("a");
+                a.href = url;
+                let filename = prompt("Save as...");
+                if (filename == null) return;
+
+                a.download = filename; // Set the filename for the download
+
+                // Append the anchor to the document, trigger a click on it, and then remove it
+                document.body.appendChild(a); // Append to the body (or any other existing element)
+                a.click(); // Trigger the download
+
+                // Clean up by revoking the object URL and removing the anchor element
+                URL.revokeObjectURL(url);
+                document.body.removeChild(a);
+            }
+
+            function assembleTableFromShapes(shapesArray) {
+                // the argument should be an array of arrays (i.e. ints) or of the type bytearray
+                // ideally, these should be sprite tables already packed with no headers
+                const num = shapesArray.length;
+                if (num > 255) {
+                    throw "Too many shapes for shape table";
+                }
+                let offsets = [];
+                const dataSize = shapesArray.reduce((acc, curr) => acc + curr.length, 0);
+                const headerSize = 2 + shapesArray.length * 2;
+                const packedArray = new Uint8Array(headerSize + dataSize + 1);
+                packedArray[0] = num; // number of shapes
+                packedArray[1] = 0; // unused
+                let nextShapeOffset = 2 + num * 2;
+                //
+                // create header and keep the offsets
+                //
+                for (var i = 0; i < num; i++) {
+                    offsets[i] = nextShapeOffset;
+                    let lowByte = nextShapeOffset & 0xff;
+                    let highByte = (nextShapeOffset >> 8) & 0xff;
+                    packedArray[2 + i * 2] = lowByte; // offset to shape 1 (low order byte)
+                    packedArray[3 + i * 2] = highByte; // offset to shape 1 (high oder byte)
+                    console.log("shape", i, "offset:", nextShapeOffset, "(" + lowByte + "," + highByte + ")");
+                    nextShapeOffset = nextShapeOffset + shapesArray[i].length;
+                }
+                //
+                // write the shapes at their offsets
+                //
+                for (var i = 0; i < num; i++) {
+                    let shape = shapesArray[i];
+                    let offset = offsets[i];
+                    for (var c = 0; c < shape.length; c++) {
+                        packedArray[offset + c] = shape[c];
+                    }
+                }
+                // the table ends with a zero byte
+
+                packedArray[packedArray.length - 1] = 0;
+                return packedArray;
+            }
+
+            function packIntegersToUint8Array(integers, header = true) {
                 // Each element needs 3 bits, so two elements make a byte.
                 // If there's an odd number of integers, the last one still requires a full byte.
                 // ignoring the special case of using the two high bits for now
                 const size = Math.ceil(integers.length / 2) + 4;
                 const packedArray = new Uint8Array(size);
-                packedArray[0] = 1; // number of shapes
-                packedArray[1] = 0; // unused
-                packedArray[2] = 4; // offset to shape 1 (low order byte)
-                packedArray[3] = 0; // offset to shape 1 (high oder byte)
-
+                let offset = 0;
+                if (header) {
+                    packedArray[0] = 1; // number of shapes
+                    packedArray[1] = 0; // unused
+                    packedArray[2] = 4; // offset to shape 1 (low order byte)
+                    packedArray[3] = 0; // offset to shape 1 (high oder byte)
+                    offset = 4;
+                }
                 integers.forEach((value, index) => {
                     // Calculate which byte this value should go into
-                    const byteIndex = 4 + Math.floor(index / 2);
+                    const byteIndex = offset + Math.floor(index / 2);
 
                     if (value === 0) {
                         packedArray[byteIndex] = 0;
@@ -489,10 +704,20 @@
                         // shift the value left by 3 bits and add it to the byte.
                         packedArray[byteIndex] |= value << 3;
                     }
+
+                    // there's a further space optimization possible with the
+                    // two high bits... I am skipping this for now.
                 });
 
                 return packedArray;
             }
+
+            /*  Sample Program that loads the shape table:
+              5   X = 0: POKE 232,0: POKE 233,32
+              10  READ D: IF D < 0 THEN  GOTO 100
+              20  POKE 16384 + X, INT (D): X = X + 1: GOTO 10
+             100  HGR : HCOLOR= 3: SCALE= 1: ROT= 0: DRAW 1 AT 30,50
+            */
 
             function createBasic() {
                 let array = packIntegersToUint8Array(convertCanvasToShapeData());
@@ -575,7 +800,7 @@
                     result += command.toString(16).padStart(2, "0") + " ";
                 }
 
-                document.getElementById("output").textContent = result;
+                document.getElementById("output").textContent = "01 00 04 00\n" + chunk(result, 33).join("\n");
                 return result;
             }
 
@@ -594,6 +819,8 @@
                 document.getElementById("output").textContent = result;
                 return result;
             }
+
+            // Undo support
 
             let canvasStates = [];
 
@@ -616,6 +843,8 @@
                 img.src = previousState;
             }
 
+            // Loading and saving to local storage
+
             function loadDrawingOntoCanvas(name) {
                 let savedDataUrl = localStorage.getItem(name);
                 if (savedDataUrl) {
@@ -623,10 +852,11 @@
                     img.src = savedDataUrl;
                     img.onload = function () {
                         // Display the image on the page or draw it on another canvas
-                        clear();
+                        resizeCanvas(img.width, img.height);
                         ctx.drawImage(img, 0, 0, img.width, img.height);
                         backupCtx.drawImage(img, 0, 0, img.width, img.height);
                         canvasStates = [];
+                        document.title = name;
                     };
                 }
             }
@@ -642,24 +872,30 @@
                 const dataUrl = canvas.toDataURL();
                 localStorage.setItem(name, dataUrl);
                 showSelectMenuAndLoadDrawing();
+                document.title = name;
             }
 
             function showSelectMenuAndLoadDrawing() {
                 //const select = document.createElement('select');
-                const select = document.getElementById("loadSelect");
-                select.innerHTML = `<option>Load...</option>`;
+                let select = document.getElementById("loadSelect");
+                let bs = document.getElementById("buildSelect");
+                select.innerHTML = "<option>Load...</option>";
+                bs.innerHTML = "";
                 Object.keys(localStorage).forEach((key) => {
                     select.innerHTML += `<option value="${key}">${key}</option>`;
+                    bs.innerHTML += `<option value="${key}">${key}</option>`;
                 });
 
                 select.addEventListener("change", function () {
                     if (this.value !== "Load...") {
                         loadDrawingOntoCanvas(this.value);
+                        this.options[0].selected = true;
                     }
                 });
             }
             showSelectMenuAndLoadDrawing();
 
+            // for debugging, download as encoded text
             function downloadShapeAsTextFile() {
                 let filename = "";
                 const select = document.getElementById("loadSelect");
@@ -689,6 +925,34 @@
                 // Clean up by revoking the object URL and removing the anchor element
                 URL.revokeObjectURL(url);
                 document.body.removeChild(a);
+            }
+
+            // for debugging, download a PNG
+            function downloadShapeAsPNG() {
+                let filename = "";
+                const select = document.getElementById("loadSelect");
+                if (select.value == "Load...") {
+                    filename = prompt("Save as...");
+                    if (filename == null) return;
+                } else {
+                    filename = select.value;
+                }
+                filename += ".png";
+
+                const dataUrl = canvas.toDataURL("image/png");
+
+                let downloadLink = document.createElement("a");
+                downloadLink.href = dataUrl;
+                downloadLink.download = filename;
+
+                // Append the anchor to the document body temporarily
+                document.body.appendChild(downloadLink);
+
+                // Trigger a click on the anchor to start the download
+                downloadLink.click();
+
+                // Clean up by removing the temporary anchor element
+                document.body.removeChild(downloadLink);
             }
 
             function downloadShapeAsBinaryFile() {
@@ -725,6 +989,7 @@
                 document.body.removeChild(a);
             }
 
+            // flood fill algorithm courtesy of chatGPT
             function floodFill(startX, startY, fillColor) {
                 const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
                 const data = imageData.data;
@@ -801,6 +1066,7 @@
                 return c1.r === c2.r && c1.g === c2.g && c1.b === c2.b && c1.a === c2.a;
             }
 
+            // set up event listeners for tools and canvas
             document.getElementById("pencilBtn").addEventListener("click", () => (tool = "pencil"));
             document.getElementById("lineBtn").addEventListener("click", () => (tool = "line"));
             document.getElementById("rectBtn").addEventListener("click", () => (tool = "rect"));
@@ -808,9 +1074,7 @@
             document.getElementById("fill").addEventListener("click", () => (tool = "fill"));
             document.getElementById("zoomInBtn").addEventListener("click", zoomIn);
             document.getElementById("zoomOutBtn").addEventListener("click", zoomOut);
-            document.getElementById("convertBtn").addEventListener("click", convertCanvasToString);
             document.getElementById("clear").addEventListener("click", clear);
-            document.getElementById("makeShape").addEventListener("click", convertCanvasToShapeData);
             canvas.addEventListener("mousedown", startDrawing);
             canvas.addEventListener("mousemove", draw);
             canvas.addEventListener("mouseup", endDrawing);
@@ -824,6 +1088,46 @@
                 }
             });
 
+            // Drag to resize
+            let isDragging = false;
+            const dragHandle = document.getElementById("dragHandle");
+            let dragStartX, dragStartY, startWidth, startHeight;
+
+            dragHandle.addEventListener("mousedown", function (e) {
+                isDragging = true;
+                dragStartX = e.clientX;
+                dragStartY = e.clientY;
+                startWidth = canvas.offsetWidth;
+                startHeight = canvas.offsetHeight;
+                e.preventDefault();
+            });
+
+            document.addEventListener("mousemove", function (e) {
+                if (!isDragging) return;
+                let newWidth = startWidth + (e.clientX - dragStartX);
+                let newHeight = startHeight + (e.clientY - dragStartY);
+
+                // Optionally, keep the canvas square
+                if (e.shiftKey) {
+                    let newSize = Math.floor(Math.max(newWidth, newHeight) / scale);
+                    resizeCanvas(newSize);
+                    document.getElementById("sizeText").textContent = "(" + newSize + " x " + newSize + ")";
+                } else {
+                    var w = Math.floor(newWidth / scale);
+                    let h = Math.floor(newHeight / scale);
+                    resizeCanvas(w, h);
+                    document.getElementById("sizeText").textContent = "(" + w + " x " + h + ")";
+                }
+            });
+
+            document.addEventListener("mouseup", function (e) {
+                if (isDragging) {
+                    isDragging = false;
+                    updateCanvasScale(); // Assuming this function updates the display based on the new canvas size
+                }
+            });
+
+            // for the future: load a shape file and render it as a bitmap
             function extractCommandsFromUint8Array(inputArray) {
                 const commands = [];
                 for (let i = 0; i < inputArray.length; i++) {
